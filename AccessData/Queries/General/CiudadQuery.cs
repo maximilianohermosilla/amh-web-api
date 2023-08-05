@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces.General.IQueries;
 using Domain.Models;
-using Domain.Models.MayiBeerCollection;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccessData.Query.General
@@ -16,19 +15,19 @@ namespace AccessData.Query.General
 
         public async Task<List<Ciudad>> GetAll()
         {
-            var lista = await _context.Ciudad.ToListAsync();
+            var lista = await _context.Ciudad.Include(c => c.IdPaisNavigation).ToListAsync();
             return lista;
         }
 
         public async Task<List<Ciudad>> GetAllByCountry(int? idPais)
         {
-            var lista = await _context.Ciudad.Where(m => m.IdPais == idPais).ToListAsync();
+            var lista = await _context.Ciudad.Where(m => m.IdPais == idPais).Include(c => c.IdPaisNavigation).ToListAsync();
             return lista;
         }
 
         public async Task<Ciudad> GetById(int? id)
         {
-            var element = await _context.Ciudad.Where(m => m.Id == id).FirstOrDefaultAsync();
+            var element = await _context.Ciudad.Where(m => m.Id == id).Include(c => c.IdPaisNavigation).FirstOrDefaultAsync();
             return element;
         }
     }

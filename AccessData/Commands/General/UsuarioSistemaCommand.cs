@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces.General.ICommands;
 using Domain.Models;
-using Domain.Models.MayiBeerCollection;
 
 namespace AccessData.Commands.General
 {

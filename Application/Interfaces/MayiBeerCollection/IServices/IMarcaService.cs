@@ -3,7 +3,7 @@ using Application.DTO.MayiBeerCollection;
 
 namespace Application.Interfaces.MayiBeerCollection.IServices
 {
-    internal interface IMarcaService
+    public interface IMarcaService
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);

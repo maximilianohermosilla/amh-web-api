@@ -3,7 +3,7 @@ using Application.DTO.MayiBeerCollection;
 
 namespace Application.Interfaces.MayiBeerCollection.IServices
 {
-    internal interface IEstiloService
+    public interface IEstiloService
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);

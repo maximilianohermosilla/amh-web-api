@@ -3,7 +3,7 @@ using Application.DTO.MayiBeerCollection;
 
 namespace Application.Interfaces.MayiBeerCollection.IServices
 {
-    internal interface ICervezaService
+    public interface ICervezaService
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetAllByType(int tipoMercaderiaId);

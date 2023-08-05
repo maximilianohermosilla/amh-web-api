@@ -1,6 +1,4 @@
-﻿using Domain.Models.MayiBeerCollection;
-
-namespace Domain.Models;
+﻿namespace Domain.Models;
 
 public partial class Pais
 {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
-namespace amh_web_api.Controllers
+namespace amh_web_api.Controllers.General
 {
     [Route("[controller]")]
     [ApiController]

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AccessData.Query.GestorExpedientes
 {
-    public class BancoQuery : IActoQuery
+    public class ActoQuery : IActoQuery
     {
         private AmhWebDbContext _context;
 
-        public BancoQuery(AmhWebDbContext context)
+        public ActoQuery(AmhWebDbContext context)
         {
             _context = context;
         }

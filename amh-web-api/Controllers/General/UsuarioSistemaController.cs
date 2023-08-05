@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
-namespace amh_web_api.Controllers
+namespace amh_web_api.Controllers.General
 {
     [Route("[controller]")]
     [ApiController]
@@ -65,7 +65,7 @@ namespace amh_web_api.Controllers
                 _logger.LogError("Ocurrió un error al buscar el sistema: " + IdSistema + ". Detalle: " + ex.Message);
                 return BadRequest(ex.Message);
             }
-           
+
 
             _logger.LogWarning("Búsqueda de sistema Id: " + IdSistema + ". Resultados: " + item.Descripcion);
             return Ok(sistemaDTO);
@@ -143,7 +143,7 @@ namespace amh_web_api.Controllers
             if (item == null)
             {
                 return NotFound(eliminar);
-            }     
+            }
 
             _contexto.UsuarioSistema.Remove(item);
             _contexto.SaveChanges();

@@ -11,7 +11,7 @@ using amh_web_api.DTO;
 using Application.Helpers;
 using Domain.Models;
 
-namespace amh_web_api.Controllers
+namespace amh_web_api.Controllers.General
 {
     [Route("[controller]")]
     [ApiController]
@@ -46,7 +46,7 @@ namespace amh_web_api.Controllers
                 var claims = new ClaimsIdentity();
                 claims.AddClaim(new Claim(ClaimTypes.Name, request.Login));
                 claims.AddClaim(new Claim(ClaimTypes.Role, userDTO.Perfil));
-                claims.AddClaim(new Claim(ClaimTypes.NameIdentifier , userDTO.Id.ToString()));
+                claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, userDTO.Id.ToString()));
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -82,7 +82,7 @@ namespace amh_web_api.Controllers
                 if (_perfil != null)
                 {
                     _userDTO.Perfil = _perfil.Descripcion;
-                }   
+                }
 
                 var usuarioSistemas = (from tbl in _contexto.UsuarioSistema
                                        join s in _contexto.Sistema on tbl.IdSistema equals s.Id
@@ -97,7 +97,7 @@ namespace amh_web_api.Controllers
                 }
             }
 
-            return _userDTO;             
+            return _userDTO;
         }
 
         [HttpGet("listar/")]
@@ -119,7 +119,7 @@ namespace amh_web_api.Controllers
 
                 if (usuariosSistema != null)
                 {
-                    item.Sistemas = usuarioSistemaDTO;                    
+                    item.Sistemas = usuarioSistemaDTO;
                 }
             }
 
@@ -227,7 +227,7 @@ namespace amh_web_api.Controllers
 
             _contexto.Usuario.Remove(item);
             _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó el Usuario: " + IdUsuario+ ", " + item.Nombre);
+            _logger.LogWarning("Se eliminó el Usuario: " + IdUsuario + ", " + item.Nombre);
             return Ok(IdUsuario);
         }
 

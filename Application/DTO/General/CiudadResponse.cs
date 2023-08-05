@@ -1,4 +1,5 @@
-﻿using Domain.Models.MayiBeerCollection;
+﻿using Domain.Models;
+using Domain.Models.MayiBeerCollection;
 
 namespace Application.DTO.General
 {
@@ -7,7 +8,6 @@ namespace Application.DTO.General
         public int Id { get; set; }
         public string? Nombre { get; set; }
         public int IdPais { get; set; }
-        public int PaisNombre { get; set; }
-        public List<Cerveza>? Cervezas { get; set; }
+        public PaisResponse IdPaisNavigation { get; set; }
     }
 }

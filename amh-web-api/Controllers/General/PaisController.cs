@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using AccessData;
 using amh_web_api.DTO;
 using Domain.Models;
-using Domain.Models.MayiBeerCollection;
 
 #nullable disable
-namespace amh_web_api.Controllers
+namespace amh_web_api.Controllers.General
 {
     [Route("[controller]")]
     [ApiController]
@@ -26,7 +25,7 @@ namespace amh_web_api.Controllers
             _logger = logger;
         }
 
-        [HttpGet("listar/")]        
+        [HttpGet("listar/")]
         public ActionResult<IEnumerable<PaisDTO>> Pais()
         {
             List<Pais> lst = (from tbl in _contexto.Pais where tbl.Id > 0 select new Pais() { Id = tbl.Id, Nombre = tbl.Nombre, Imagen = tbl.Imagen }).ToList();
@@ -124,7 +123,7 @@ namespace amh_web_api.Controllers
             {
                 _logger.LogError("Ocurrió un error al insertar el país: " + nuevoPais.Nombre + ". Detalle: " + ex.Message);
                 return BadRequest(ex.Message);
-            }   
+            }
         }
 
         [HttpPut("actualizar")]

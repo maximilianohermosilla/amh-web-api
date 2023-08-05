@@ -1,15 +1,13 @@
 ﻿using Application.Interfaces.General.ICommands;
-using Domain.Models.MayiBeerCollection;
-using System.ComponentModel.Design;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Domain.Models;
 
 namespace AccessData.Commands.General
 {
-    public class CiudadQuery : ICiudadCommand
+    public class CiudadCommand : ICiudadCommand
     {
         private AmhWebDbContext _context;
 
-        public CiudadQuery(AmhWebDbContext context)
+        public CiudadCommand(AmhWebDbContext context)
         {
             _context = context;
         }

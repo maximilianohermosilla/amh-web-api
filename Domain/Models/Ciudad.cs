@@ -1,4 +1,6 @@
-﻿namespace Domain.Models.MayiBeerCollection;
+﻿using Domain.Models.MayiBeerCollection;
+
+namespace Domain.Models;
 
 public partial class Ciudad
 {

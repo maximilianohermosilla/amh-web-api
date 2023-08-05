@@ -6,8 +6,9 @@ using AccessData;
 using Domain.Models.MayiBeerCollection;
 using amh_web_api.DTO;
 using Domain.Models;
+using Application.Interfaces.General.IServices;
 
-namespace amh_web_api.Controllers
+namespace amh_web_api.Controllers.General
 {
     [Route("[controller]")]
     [ApiController]
@@ -17,32 +18,35 @@ namespace amh_web_api.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly ILogger<CiudadController> _logger;
+        private readonly ICiudadService _service;
 
-        public CiudadController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<CiudadController> logger)
+        public CiudadController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<CiudadController> logger, ICiudadService service)
         {
             _contexto = context;
             _configuration = configuration;
             _mapper = mapper;
             _logger = logger;
+            _service = service;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Ciudad>> Ciudades()
+        public async Task<IActionResult> GetAll()
         {
-            List<Ciudad> lst = (from tbl in _contexto.Ciudad where tbl.Id > 0 select tbl).OrderBy(e => e.IdPais).ThenBy(e => e.Nombre).ToList();
-
-            List<CiudadDTO> ciudadesDTO = _mapper.Map<List<CiudadDTO>>(lst);
-
-            foreach (var item in ciudadesDTO)
+            try
             {
-                Pais _pais = (from h in _contexto.Pais where h.Id == item.IdPais select h).FirstOrDefault();
-                if (_pais != null)
-                {
-                    item.PaisNombre = _pais.Nombre;
-                }
-            }
+                var response = await _service.GetAll();
 
-            return Ok(ciudadesDTO);
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
         }
 
         [HttpGet("buscarPais/{PaisId}")]
@@ -60,13 +64,13 @@ namespace amh_web_api.Controllers
 
 
             foreach (var item in ciudadesDTO)
-            {                
+            {
                 if (_pais != null)
                 {
                     item.PaisNombre = _pais.Nombre;
                 }
             }
-            
+
             return Ok(ciudadesDTO);
         }
 

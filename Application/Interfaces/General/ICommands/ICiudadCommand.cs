@@ -1,4 +1,4 @@
-﻿using Domain.Models.MayiBeerCollection;
+﻿using Domain.Models;
 
 namespace Application.Interfaces.General.ICommands
 {
