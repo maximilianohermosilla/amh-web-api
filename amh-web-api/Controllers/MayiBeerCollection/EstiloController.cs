@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Data;
-using AccessData;
+﻿using Microsoft.AspNetCore.Mvc;
 using amh_web_api.DTO;
-using Domain.Models.MayiBeerCollection;
+using Application.Interfaces.MayiBeerCollection.IServices;
+using Application.DTO.MayiBeerCollection;
 
 namespace amh_web_api.Controllers.MayiBeerCollection
 {
@@ -12,182 +9,136 @@ namespace amh_web_api.Controllers.MayiBeerCollection
     [ApiController]
     public class EstiloController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<EstiloController> _logger;
-        public EstiloController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<EstiloController> logger)
+        private readonly IEstiloService _service;
+
+        public EstiloController(IEstiloService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<EstiloDTO>> Estilos()
-        {
-            var lst = (from tbl in _contexto.Estilo where tbl.Id > 0 select new Estilo() { Id = tbl.Id, Nombre = tbl.Nombre }).ToList();
-
-            List<EstiloDTO> estilosDTO = _mapper.Map<List<EstiloDTO>>(lst);
-
-            //foreach (var item in estilosDTO)
-            //{
-            //    Archivo _archivo = (from h in _contexto.Archivo where h.Id == item.IdArchivo select h).FirstOrDefault();
-            //    if (_archivo != null)
-            //    {
-            //        string stringArchivo = Encoding.ASCII.GetString(_archivo.Archivo1);
-            //        item.Imagen = stringArchivo;
-            //    }
-            //}
-
-            return Ok(estilosDTO);
-        }
-
-        [HttpGet("listarProxy/")]
-        public ActionResult<IEnumerable<EstiloDTO>> EstilosProxy()
-        {
-            var lst = (from tbl in _contexto.Estilo where tbl.Id > 0 select new Estilo() { Id = tbl.Id, Nombre = tbl.Nombre }).OrderBy(e => e.Nombre).ToList();
-
-            List<EstiloDTO> estilosDTO = _mapper.Map<List<EstiloDTO>>(lst);
-
-            return Ok(estilosDTO);
-        }
-
-        [HttpGet("buscar/{EstiloId}")]
-        public ActionResult<EstiloDTO> Estilos(int EstiloId)
-        {
-            Estilo cl = (from tbl in _contexto.Estilo where tbl.Id == EstiloId select new Estilo() { Id = tbl.Id, Nombre = tbl.Nombre }).FirstOrDefault();
-            if (cl == null)
-            {
-                return NotFound(EstiloId);
-            }
-
-            EstiloDTO item = _mapper.Map<EstiloDTO>(cl);
-
-            //Archivo _archivo = (from h in _contexto.Archivo where h.Id == item.IdArchivo select h).FirstOrDefault();
-
-            //if (_archivo != null)
-            //{
-            //    string stringArchivo = Encoding.ASCII.GetString(_archivo.Archivo1);
-            //    item.Imagen = stringArchivo;
-            //}
-            _logger.LogWarning("Búsqueda de Estilo Id: " + EstiloId + ". Resultados: " + item.Nombre);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(EstiloDTO nuevo)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                Estilo _estilo = _mapper.Map<Estilo>(nuevo);
+                var response = await _service.GetAll();
 
-                //if (nuevo.Imagen != null)
-                //{
-                //    byte[] bytes = Encoding.ASCII.GetBytes(nuevo.Imagen);
-                //    Archivo newArch = new Archivo() { Archivo1 = bytes };
-                //    _contexto.Archivo.Add(newArch);
-                //    _contexto.SaveChanges();
-                //    _estilo.IdArchivo = newArch.Id;
-                //}
-
-                _contexto.Estilo.Add(_estilo);
-                _contexto.SaveChanges();
-
-                nuevo.Id = _estilo.Id;
-
-                _logger.LogWarning("Se insertó un nuevo estilo: " + nuevo.Id + ". Nombre: " + nuevo.Nombre);
-                return Ok(nuevo);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Ocurrió un error al insertar el estilo: " + nuevo.Nombre + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(EstiloDTO actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                Estilo _estilo = (from h in _contexto.Estilo where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (_estilo == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = _estilo.Nombre;
-                _estilo.Nombre = actualiza.Nombre;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                //if (actualiza.Imagen != null)
-                //{
-                //    byte[] bytes = Encoding.ASCII.GetBytes(actualiza.Imagen);
-                //    Archivo arch = (from a in _contexto.Archivo where a.Id == _estilo.IdArchivo select a).FirstOrDefault();
-
-                //    if (arch == null)
-                //    {
-                //        Archivo newArch = new Archivo() { Archivo1 = bytes };
-                //        _contexto.Archivo.Add(newArch);
-                //        _contexto.SaveChanges();
-                //        _estilo.IdArchivo = newArch.Id;
-                //    }
-                //    else
-                //    {
-                //        arch.Archivo1 = bytes;
-                //        _contexto.Archivo.Update(arch);
-                //        _contexto.SaveChanges();
-                //    }
-                //}
-
-                _contexto.Estilo.Update(_estilo);
-                _contexto.SaveChanges();
-
-                _logger.LogWarning("Se actualizó el estilo: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-                return Ok(actualiza);
-
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-
-        [HttpDelete("eliminar/{EstiloId}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int EstiloId)
+        [HttpGet("Id")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            Estilo _estilo = (from h in _contexto.Estilo where h.Id == EstiloId select h).FirstOrDefault();
-
-            if (_estilo == null)
+            try
             {
-                return NotFound(EstiloId);
+                var response = await _service.GetById(Id);
+
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(EstiloRequest request)
+        {
+            try
+            {
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre del estilo no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar el estilo. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
             }
 
-            //Archivo arch = (from a in _contexto.Archivo where a.Id == _estilo.IdArchivo select a).FirstOrDefault();
+        }
 
-            List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdEstilo == EstiloId select tbl).ToList();
-            if (_cervezas.Count() > 0)
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(EstiloRequest request, int id)
+        {
+            try
             {
-                return BadRequest("No se puede eliminar el estilo porque tiene una o más cervezas asociadas");
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado el estilo exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar el estilo" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre del estilo no puede estar vacío" }) { StatusCode = 400 };
+                }
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
 
-            //if (arch != null)
-            //{
-            //    _contexto.Archivo.Remove(arch);
-            //    _contexto.SaveChanges();
-            //}
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
 
-            _contexto.Estilo.Remove(_estilo);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó el estilo: " + EstiloId + ", " + _estilo.Nombre);
-            return Ok(EstiloId);
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado el estilo exitosamente.", Response = response });
+                }
+
+                return new JsonResult(new { Message = "No se encuentra el estilo" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Data;
 using AccessData;
 using amh_web_api.DTO;
 using Domain.Models.MayiBeerCollection;
+using Application.DTO.MayiBeerCollection;
+using Application.Interfaces.MayiBeerCollection.IServices;
 
 namespace amh_web_api.Controllers.MayiBeerCollection
 {
@@ -13,184 +15,136 @@ namespace amh_web_api.Controllers.MayiBeerCollection
     [ApiController]
     public class MarcaController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<MarcaController> _logger;
+        private readonly IMarcaService _service;
 
-        public MarcaController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<MarcaController> logger)
+        public MarcaController(IMarcaService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<MarcaDTO>> Marcas()
-        {
-            var lst = (from tbl in _contexto.Marca where tbl.Id > 0 select new Marca() { Id = tbl.Id, Nombre = tbl.Nombre }).ToList();
-
-            List<MarcaDTO> marcasDTO = _mapper.Map<List<MarcaDTO>>(lst);
-
-            //foreach (var item in marcasDTO)
-            //{
-            //    Archivo _archivo = (from h in _contexto.Archivo where h.Id == item.IdArchivo select h).FirstOrDefault();
-            //    if (_archivo != null)
-            //    {
-            //        string stringArchivo = Encoding.ASCII.GetString(_archivo.Archivo1);
-            //        item.Imagen = stringArchivo;
-            //    }
-            //}
-
-            return Ok(marcasDTO);
-        }
-
-        [HttpGet("listarProxy/")]
-        public ActionResult<IEnumerable<MarcaDTO>> MarcasProxy()
-        {
-            //_logger.LogWarning("Lista de marcas proxy");
-            var lst = (from tbl in _contexto.Marca where tbl.Id > 0 select new Marca() { Id = tbl.Id, Nombre = tbl.Nombre }).OrderBy(e => e.Nombre).ToList();
-
-            List<MarcaDTO> marcasDTO = _mapper.Map<List<MarcaDTO>>(lst);
-
-
-            return Ok(marcasDTO);
-        }
-
-        [HttpGet("buscar/{MarcaId}")]
-        public ActionResult<MarcaDTO> Marcas(int MarcaId)
-        {
-            Marca cl = (from tbl in _contexto.Marca where tbl.Id == MarcaId select new Marca() { Id = tbl.Id, Nombre = tbl.Nombre }).FirstOrDefault();
-            if (cl == null)
-            {
-                return NotFound(MarcaId);
-            }
-
-            MarcaDTO item = _mapper.Map<MarcaDTO>(cl);
-
-            //Archivo _archivo = (from h in _contexto.Archivo where h.Id == item.IdArchivo select h).FirstOrDefault();
-
-            //if (_archivo != null)
-            //{
-            //    string stringArchivo = Encoding.ASCII.GetString(_archivo.Archivo1);
-            //    item.Imagen = stringArchivo;
-            //}
-            _logger.LogWarning("Búsqueda de Marca Id: " + MarcaId + ". Resultados: " + item.Nombre);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(MarcaDTO nuevo)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                Marca _marca = _mapper.Map<Marca>(nuevo);
+                var response = await _service.GetAll();
 
-                //if (nuevo.Imagen != null)
-                //{
-                //    byte[] bytes = Encoding.ASCII.GetBytes(nuevo.Imagen);
-                //    Archivo newArch = new Archivo() { Archivo1 = bytes };
-                //    _contexto.Archivo.Add(newArch);
-                //    _contexto.SaveChanges();
-                //    _marca.IdArchivo = newArch.Id;
-                //}
-
-                _contexto.Marca.Add(_marca);
-                _contexto.SaveChanges();
-
-                nuevo.Id = _marca.Id;
-
-                _logger.LogWarning("Se insertó una nueva marca: " + nuevo.Id + ". Nombre: " + nuevo.Nombre);
-                return Ok(nuevo);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Ocurrió un error al insertar la marca: " + nuevo.Nombre + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-
-
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(MarcaDTO actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                Marca _marca = (from h in _contexto.Marca where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (_marca == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = _marca.Nombre;
-                _marca.Nombre = actualiza.Nombre;
-                //if (actualiza.Imagen != null)
-                //{
-                //    byte[] bytes = Encoding.ASCII.GetBytes(actualiza.Imagen);
-                //    Archivo arch = (from a in _contexto.Archivo where a.Id == _marca.IdArchivo select a).FirstOrDefault();
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                //    if (arch == null)
-                //    {
-                //        Archivo newArch = new Archivo() { Archivo1 = bytes };
-                //        _contexto.Archivo.Add(newArch);
-                //        _contexto.SaveChanges();
-                //        _marca.IdArchivo = newArch.Id;
-                //    }
-                //    else
-                //    {
-                //        arch.Archivo1 = bytes;
-                //        _contexto.Archivo.Update(arch);
-                //        _contexto.SaveChanges();
-                //    }
-                //}
-
-                _contexto.Marca.Update(_marca);
-                _contexto.SaveChanges();
-                _logger.LogWarning("Se actualizó la marca: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ocurrió un error al actualizar la marca: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{MarcaId}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int MarcaId)
+        [HttpGet("Id")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            Marca _marca = (from h in _contexto.Marca where h.Id == MarcaId select h).FirstOrDefault();
-
-            if (_marca == null)
+            try
             {
-                return NotFound(MarcaId);
+                var response = await _service.GetById(Id);
+
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(MarcaRequest request)
+        {
+            try
+            {
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre de la marca no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la marca. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
             }
 
-            List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdMarca == MarcaId select tbl).ToList();
-            if (_cervezas.Count() > 0)
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(MarcaRequest request, int id)
+        {
+            try
             {
-                return BadRequest("No se puede eliminar la marca porque tiene una o más cervezas asociadas");
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado la marca exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar la marca" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre de la marca no puede estar vacío" }) { StatusCode = 400 };
+                }
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
 
-            //Archivo arch = (from a in _contexto.Archivo where a.Id == _marca.IdArchivo select a).FirstOrDefault();
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
 
-            //if (arch != null)
-            //{
-            //    _contexto.Archivo.Remove(arch);
-            //    _contexto.SaveChanges();
-            //}
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado la marca exitosamente.", Response = response });
+                }
 
-            _contexto.Marca.Remove(_marca);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó la marca: " + MarcaId + ", " + _marca.Nombre);
-            return Ok(MarcaId);
+                return new JsonResult(new { Message = "No se encuentra la marca" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
         }
     }
 }

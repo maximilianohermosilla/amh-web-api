@@ -2,9 +2,7 @@
 using amh_web_api.DTO;
 using Application.Interfaces.General.IServices;
 using Application.DTO.General;
-using Azure.Core;
 
-#nullable disable
 namespace amh_web_api.Controllers.General
 {
     [Route("[controller]")]
@@ -43,11 +41,11 @@ namespace amh_web_api.Controllers.General
         }
 
         [HttpGet("IdPais")]
-        public async Task<IActionResult> GetById(int IdPais)
+        public async Task<IActionResult> GetById(int Id)
         {
             try
             {
-                var response = await _service.GetById(IdPais);
+                var response = await _service.GetById(Id);
 
                 if (response.statusCode == 400)
                 {
@@ -68,7 +66,7 @@ namespace amh_web_api.Controllers.General
 
         [HttpPost]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> nuevo(PaisRequest request)
+        public async Task<IActionResult> Insert(PaisRequest request)
         {
             try
             {

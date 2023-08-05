@@ -3,6 +3,9 @@ using Application.DTO.MayiBeerCollection;
 using Application.Interfaces.MayiBeerCollection.ICommands;
 using Application.Interfaces.MayiBeerCollection.IQueries;
 using Application.Interfaces.MayiBeerCollection.IServices;
+using AutoMapper;
+using Domain.Models.MayiBeerCollection;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services.MayiBeerCollection
 {
@@ -10,36 +13,176 @@ namespace Application.Services.MayiBeerCollection
     {
         private readonly IEstiloQuery _estiloQuery;
         private readonly IEstiloCommand _estiloCommand;
+        private readonly IMapper _mapper;
+        private readonly ILogger<EstiloService> _logger;
 
-        public EstiloService(IEstiloQuery estiloQuery, IEstiloCommand estiloCommand)
+        public EstiloService(IEstiloQuery estiloQuery, IEstiloCommand estiloCommand, IMapper mapper, ILogger<EstiloService> logger)
         {
             _estiloQuery = estiloQuery;
             _estiloCommand = estiloCommand;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public Task<ResponseModel> Delete(int id)
+        public async Task<ResponseModel> Delete(int id)
         {
-            throw new NotImplementedException();
+            ResponseModel response = new ResponseModel();
+            EstiloResponse estiloResponse = new EstiloResponse();
+            try
+            {
+                var estilo = await _estiloQuery.GetById(id);
+
+                if (estilo == null)
+                {
+                    response.statusCode = 404;
+                    response.message = "El estilo seleccionado no existe";
+                    response.response = null;
+                    return response;
+                }
+
+                //List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdCiudad == CiudadId select tbl).ToList();
+                //if (_cervezas.Count() > 0)
+                //{
+                //    return BadRequest("No se puede eliminar la ciudad porque tiene una o más cervezas asociadas");
+                //}
+
+                await _estiloCommand.Delete(estilo);
+                estiloResponse = _mapper.Map<EstiloResponse>(estilo);
+
+                _logger.LogInformation("Se eliminó el estilo: " + id + ", " + estilo.Nombre);
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+            }
+
+            response.statusCode = 200;
+            response.message = "Estilo eliminado exitosamente";
+            response.response = estiloResponse;
+            return response;
         }
 
-        public Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll()
         {
-            throw new NotImplementedException();
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                List<Estilo> lista = await _estiloQuery.GetAll();
+                List<EstiloResponse> listaDTO = _mapper.Map<List<EstiloResponse>>(lista);
+
+                response.message = "Consulta realizada correctamente";
+                response.statusCode = 200;
+                response.response = listaDTO;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+            }
+
+            return response;
         }
 
-        public Task<ResponseModel> GetById(int? id)
+
+        public async Task<ResponseModel> GetById(int? IdEstilo)
         {
-            throw new NotImplementedException();
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                Estilo estilo = await _estiloQuery.GetById(IdEstilo);
+
+                if (estilo == null)
+                {
+                    response.statusCode = 404;
+                    response.message = "El estilo seleccionado no existe";
+                    response.response = null;
+                    return response;
+                }
+
+                EstiloResponse EstiloResponse = _mapper.Map<EstiloResponse>(estilo);
+
+                response.message = "Consulta realizada correctamente";
+                response.statusCode = 200;
+                response.response = EstiloResponse;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+            }
+
+            return response;
         }
 
-        public Task<ResponseModel> Insert(EstiloRequest mercaderia)
+        public async Task<ResponseModel> Insert(EstiloRequest entity)
         {
-            throw new NotImplementedException();
+            ResponseModel response = new ResponseModel();
+            EstiloResponse estiloResponse = new EstiloResponse();
+            try
+            {
+                Estilo estilo = _mapper.Map<Estilo>(entity);
+                estilo = await _estiloCommand.Insert(estilo);
+                estiloResponse = _mapper.Map<EstiloResponse>(estilo);
+
+                _logger.LogInformation("Se insertó un nuevo estilo: " + estilo.Id + ". Nombre: " + estilo.Nombre);
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+                return response;
+            }
+
+            response.statusCode = 201;
+            response.message = "Estilo insertado exitosamente";
+            response.response = estiloResponse;
+            return response;
         }
 
-        public Task<ResponseModel> Update(EstiloRequest mercaderia, int id)
+
+        public async Task<ResponseModel> Update(EstiloRequest entity, int id)
         {
-            throw new NotImplementedException();
+            ResponseModel response = new ResponseModel();
+            EstiloResponse estiloResponse = new EstiloResponse();
+            try
+            {
+                var estilo = await _estiloQuery.GetById(id);
+
+                if (estilo == null)
+                {
+                    response.statusCode = 404;
+                    response.message = "El estilo seleccionado no existe";
+                    response.response = null;
+                    return response;
+                }
+
+                estilo.Nombre = entity.Nombre;
+                estilo.Imagen = entity.Imagen;
+
+                await _estiloCommand.Update(estilo);
+                estiloResponse = _mapper.Map<EstiloResponse>(estilo);
+
+                _logger.LogInformation("Se actualizó el estilo: " + estilo.Id + ". Nombre anterior: " + estilo.Nombre + ". Nombre actual: " + entity.Nombre);
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+                return response;
+            }
+
+            response.statusCode = 200;
+            response.message = "Estilo actualizado exitosamente";
+            response.response = estiloResponse;
+            return response;
         }
     }
 }

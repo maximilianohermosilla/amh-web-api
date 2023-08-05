@@ -14,9 +14,9 @@ namespace Application.Services.General
         private readonly IPaisQuery _paisQuery;
         private readonly IPaisCommand _paisCommand;
         private readonly IMapper _mapper;
-        private readonly ILogger<CiudadService> _logger;
+        private readonly ILogger<PaisService> _logger;
 
-        public PaisService(IPaisQuery paisQuery, IPaisCommand paisCommand, IMapper mapper, ILogger<CiudadService> logger)
+        public PaisService(IPaisQuery paisQuery, IPaisCommand paisCommand, IMapper mapper, ILogger<PaisService> logger)
         {
             _paisQuery = paisQuery;
             _paisCommand = paisCommand;
@@ -35,7 +35,7 @@ namespace Application.Services.General
                 if (pais == null)
                 {
                     response.statusCode = 404;
-                    response.message = "El país seleccionada no existe";
+                    response.message = "El país seleccionado no existe";
                     response.response = null;
                     return response;
                 }
