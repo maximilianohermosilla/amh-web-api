@@ -12,19 +12,26 @@ namespace AccessData.Commands.GestorGastos
             _context = context;
         }
 
-        public Task Delete(Suscripcion entity)
+        public async Task Delete(Suscripcion entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Suscripcion> Insert(Suscripcion entity)
+        public async Task<Suscripcion> Insert(Suscripcion entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public Task<Suscripcion> Update(Suscripcion entity)
+        public async Task<Suscripcion> Update(Suscripcion entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

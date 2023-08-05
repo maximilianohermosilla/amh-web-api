@@ -12,19 +12,26 @@ namespace AccessData.Commands.MayiBeerCollection
             _context = context;
         }
 
-        public Task Delete(Estilo estilo)
+        public async Task Delete(Estilo estilo)
         {
-            throw new NotImplementedException();
+            _context.Remove(estilo);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Estilo> Insert(Estilo estilo)
+        public async Task<Estilo> Insert(Estilo estilo)
         {
-            throw new NotImplementedException();
+            _context.Add(estilo);
+            await _context.SaveChangesAsync();
+
+            return estilo;
         }
 
-        public Task<Estilo> Update(Estilo estilo)
+        public async Task<Estilo> Update(Estilo estilo)
         {
-            throw new NotImplementedException();
+            _context.Update(estilo);
+            await _context.SaveChangesAsync();
+
+            return estilo;
         }
     }
 }

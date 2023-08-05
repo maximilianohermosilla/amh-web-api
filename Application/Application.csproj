@@ -10,11 +10,4 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTO\General\" />
-    <Folder Include="DTO\MayiBeerCollection\" />
-    <Folder Include="DTO\GestorGastos\" />
-    <Folder Include="DTO\GestorExpedientes\" />
-  </ItemGroup>
-
 </Project>

@@ -1,4 +1,5 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.General;
 using Application.Interfaces.General.ICommands;
 using Application.Interfaces.General.IQueries;
 using Application.Interfaces.General.IServices;
@@ -16,17 +17,27 @@ namespace Application.Services.General
             _sistemaCommand = sistemaCommand;
         }
 
-        public Task<ResponseModel> GetByDate(string fecha)
+        public Task<ResponseModel> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> GetById(Guid? id)
+        public Task<ResponseModel> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insert(List<int> mercaderias, int formaEntrega)
+        public Task<ResponseModel> GetById(int? id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseModel> Insert(SistemaRequest entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseModel> Update(SistemaRequest entity, int id)
         {
             throw new NotImplementedException();
         }

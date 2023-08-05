@@ -1,4 +1,5 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.ICommands;
 using Application.Interfaces.GestorGastos.IQueries;
 using Application.Interfaces.GestorGastos.IServices;
@@ -32,12 +33,12 @@ namespace Application.Services.GestorGastos
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insert(TipoTarjeta entity)
+        public Task<ResponseModel> Insert(TipoTarjetaRequest entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Update(TipoTarjeta entity, int id)
+        public Task<ResponseModel> Update(TipoTarjetaRequest entity, int id)
         {
             throw new NotImplementedException();
         }

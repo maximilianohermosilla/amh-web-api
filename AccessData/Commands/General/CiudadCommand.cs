@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces.General.ICommands;
 using Domain.Models.MayiBeerCollection;
+using System.ComponentModel.Design;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace AccessData.Commands.General
 {
@@ -12,19 +14,26 @@ namespace AccessData.Commands.General
             _context = context;
         }
 
-        public Task Delete(Ciudad ciudad)
+        public async Task Delete(Ciudad ciudad)
         {
-            throw new NotImplementedException();
+            _context.Remove(ciudad);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Ciudad> Insert(Ciudad ciudad)
+        public async Task<Ciudad> Insert(Ciudad ciudad)
         {
-            throw new NotImplementedException();
+            _context.Add(ciudad);
+            await _context.SaveChangesAsync();
+
+            return ciudad;
         }
 
-        public Task<Ciudad> Update(Ciudad ciudad)
+        public async Task<Ciudad> Update(Ciudad ciudad)
         {
-            throw new NotImplementedException();
+            _context.Update(ciudad);
+            await _context.SaveChangesAsync();
+
+            return ciudad;
         }
     }
 }

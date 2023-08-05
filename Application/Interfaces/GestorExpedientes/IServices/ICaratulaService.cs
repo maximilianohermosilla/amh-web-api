@@ -1,5 +1,5 @@
 ﻿using amh_web_api.DTO;
-using Domain.Models.GestorExpedientes;
+using Application.DTO.GestorExpedientes;
 
 namespace Application.Interfaces.GestorExpedientes.IServices
 {
@@ -7,8 +7,8 @@ namespace Application.Interfaces.GestorExpedientes.IServices
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
-        Task<ResponseModel> Insert(Caratula entity);
-        Task<ResponseModel> Update(Caratula entity, int id);
+        Task<ResponseModel> Insert(CaratulaRequest entity);
+        Task<ResponseModel> Update(CaratulaRequest entity, int id);
         Task<ResponseModel> Delete(int id);
     }
 }

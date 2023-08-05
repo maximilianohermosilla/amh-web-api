@@ -12,19 +12,26 @@ namespace AccessData.Commands.GestorGastos
             _context = context;
         }
 
-        public Task Delete(RegistroVinculado entity)
+        public async Task Delete(RegistroVinculado entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<RegistroVinculado> Insert(RegistroVinculado entity)
+        public async Task<RegistroVinculado> Insert(RegistroVinculado entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public Task<RegistroVinculado> Update(RegistroVinculado entity)
+        public async Task<RegistroVinculado> Update(RegistroVinculado entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

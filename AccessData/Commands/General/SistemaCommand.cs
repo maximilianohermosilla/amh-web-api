@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces.General.ICommands;
 using Domain.Models;
+using Domain.Models.MayiBeerCollection;
 
 namespace AccessData.Commands.General
 {
@@ -12,19 +13,26 @@ namespace AccessData.Commands.General
             _context = context;
         }
 
-        public Task Delete(Sistema sistema)
+        public async Task Delete(Sistema sistema)
         {
-            throw new NotImplementedException();
+            _context.Remove(sistema);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Sistema> Insert(Sistema sistema)
+        public async Task<Sistema> Insert(Sistema sistema)
         {
-            throw new NotImplementedException();
+            _context.Add(sistema);
+            await _context.SaveChangesAsync();
+
+            return sistema;
         }
 
-        public Task<Sistema> Update(Sistema sistema)
+        public async Task<Sistema> Update(Sistema sistema)
         {
-            throw new NotImplementedException();
+            _context.Update(sistema);
+            await _context.SaveChangesAsync();
+
+            return sistema;
         }
     }
 }

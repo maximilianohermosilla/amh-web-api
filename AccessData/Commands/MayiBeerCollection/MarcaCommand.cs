@@ -12,19 +12,26 @@ namespace AccessData.Commands.MayiBeerCollection
             _context = context;
         }
 
-        public Task Delete(Marca marca)
+        public async Task Delete(Marca marca)
         {
-            throw new NotImplementedException();
+            _context.Remove(marca);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Marca> Insert(Marca marca)
+        public async Task<Marca> Insert(Marca marca)
         {
-            throw new NotImplementedException();
+            _context.Add(marca);
+            await _context.SaveChangesAsync();
+
+            return marca;
         }
 
-        public Task<Marca> Update(Marca marca)
+        public async Task<Marca> Update(Marca marca)
         {
-            throw new NotImplementedException();
+            _context.Update(marca);
+            await _context.SaveChangesAsync();
+
+            return marca;
         }
     }
 }

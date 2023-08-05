@@ -12,19 +12,26 @@ namespace AccessData.Commands.GestorGastos
             _context = context;
         }
 
-        public Task Delete(TipoTarjeta entity)
+        public async Task Delete(TipoTarjeta entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<TipoTarjeta> Insert(TipoTarjeta entity)
+        public async Task<TipoTarjeta> Insert(TipoTarjeta entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public Task<TipoTarjeta> Update(TipoTarjeta entity)
+        public async Task<TipoTarjeta> Update(TipoTarjeta entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

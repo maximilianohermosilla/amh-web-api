@@ -12,19 +12,26 @@ namespace AccessData.Commands.GestorExpedientes
             _context = context;
         }
 
-        public Task Delete(SituacionRevista entity)
+        public async Task Delete(SituacionRevista entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<SituacionRevista> Insert(SituacionRevista entity)
+        public async Task<SituacionRevista> Insert(SituacionRevista entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public Task<SituacionRevista> Update(SituacionRevista entity)
+        public async Task<SituacionRevista> Update(SituacionRevista entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

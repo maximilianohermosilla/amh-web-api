@@ -1,4 +1,5 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.MayiBeerCollection;
 using Application.Interfaces.MayiBeerCollection.ICommands;
 using Application.Interfaces.MayiBeerCollection.IQueries;
 using Application.Interfaces.MayiBeerCollection.IServices;
@@ -31,12 +32,12 @@ namespace Application.Services.MayiBeerCollection
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insert(MarcaDTO mercaderia)
+        public Task<ResponseModel> Insert(MarcaRequest mercaderia)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Update(MarcaDTO mercaderia, int id)
+        public Task<ResponseModel> Update(MarcaRequest mercaderia, int id)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,5 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.General;
 using Application.Interfaces.General.ICommands;
 using Application.Interfaces.General.IQueries;
 using Application.Interfaces.General.IServices;
@@ -16,17 +17,32 @@ namespace Application.Services.General
             _ciudadCommand = ciudadCommand;
         }
 
-        public Task<ResponseModel> GetByDate(string fecha)
+        public Task<ResponseModel> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> GetById(Guid? id)
+        public Task<ResponseModel> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insert(List<int> mercaderias, int formaEntrega)
+        public Task<ResponseModel> GetAllByCountry(int? idPais)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseModel> GetById(int? id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseModel> Insert(CiudadRequest entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseModel> Update(CiudadRequest entity, int id)
         {
             throw new NotImplementedException();
         }

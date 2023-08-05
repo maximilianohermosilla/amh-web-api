@@ -1,4 +1,5 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.MayiBeerCollection;
 
 namespace Application.Interfaces.MayiBeerCollection.IServices
 {
@@ -6,8 +7,8 @@ namespace Application.Interfaces.MayiBeerCollection.IServices
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
-        Task<ResponseModel> Insert(MarcaDTO mercaderia);
-        Task<ResponseModel> Update(MarcaDTO mercaderia, int id);
+        Task<ResponseModel> Insert(MarcaRequest mercaderia);
+        Task<ResponseModel> Update(MarcaRequest mercaderia, int id);
         Task<ResponseModel> Delete(int id);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.ICommands;
 using Application.Interfaces.GestorGastos.IQueries;
 using Application.Interfaces.GestorGastos.IServices;
-using Domain.Models.GestorGastos;
 
 namespace Application.Services.GestorGastos
 {
@@ -32,12 +32,12 @@ namespace Application.Services.GestorGastos
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insert(RegistroVinculado entity)
+        public Task<ResponseModel> Insert(RegistroVinculadoRequest entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Update(RegistroVinculado entity, int id)
+        public Task<ResponseModel> Update(RegistroVinculadoRequest entity, int id)
         {
             throw new NotImplementedException();
         }

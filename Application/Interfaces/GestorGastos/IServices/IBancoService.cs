@@ -1,5 +1,5 @@
 ﻿using amh_web_api.DTO;
-using Domain.Models.GestorGastos;
+using Application.DTO.GestorGastos;
 
 namespace Application.Interfaces.GestorGastos.IServices
 {
@@ -7,8 +7,8 @@ namespace Application.Interfaces.GestorGastos.IServices
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
-        Task<ResponseModel> Insert(Banco entity);
-        Task<ResponseModel> Update(Banco entity, int id);
+        Task<ResponseModel> Insert(BancoRequest entity);
+        Task<ResponseModel> Update(BancoRequest entity, int id);
         Task<ResponseModel> Delete(int id);
     }
 }

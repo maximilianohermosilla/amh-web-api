@@ -1,8 +1,8 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.GestorExpedientes;
 using Application.Interfaces.GestorExpedientes.ICommands;
 using Application.Interfaces.GestorExpedientes.IQueries;
 using Application.Interfaces.GestorExpedientes.IServices;
-using Domain.Models.GestorExpedientes;
 
 namespace Application.Services.GestorExpedientes
 {
@@ -32,12 +32,12 @@ namespace Application.Services.GestorExpedientes
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Insert(Caratula entity)
+        public Task<ResponseModel> Insert(CaratulaRequest entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> Update(Caratula entity, int id)
+        public Task<ResponseModel> Update(CaratulaRequest entity, int id)
         {
             throw new NotImplementedException();
         }

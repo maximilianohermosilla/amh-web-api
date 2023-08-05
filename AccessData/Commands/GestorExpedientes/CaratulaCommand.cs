@@ -12,19 +12,26 @@ namespace AccessData.Commands.GestorExpedientes
             _context = context;
         }
 
-        public Task Delete(Caratula entity)
+        public async Task Delete(Caratula entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Caratula> Insert(Caratula entity)
+        public async Task<Caratula> Insert(Caratula entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
-        public Task<Caratula> Update(Caratula entity)
+        public async Task<Caratula> Update(Caratula entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

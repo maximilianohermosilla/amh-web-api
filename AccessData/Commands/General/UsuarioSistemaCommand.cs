@@ -13,19 +13,26 @@ namespace AccessData.Commands.General
             _context = context;
         }
 
-        public Task Delete(UsuarioSistema usuarioSistema)
+        public async Task Delete(UsuarioSistema usuarioSistema)
         {
-            throw new NotImplementedException();
+            _context.Remove(usuarioSistema);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<UsuarioSistema> Insert(UsuarioSistema usuarioSistema)
+        public async Task<UsuarioSistema> Insert(UsuarioSistema usuarioSistema)
         {
-            throw new NotImplementedException();
+            _context.Add(usuarioSistema);
+            await _context.SaveChangesAsync();
+
+            return usuarioSistema;
         }
 
-        public Task<UsuarioSistema> Update(UsuarioSistema usuarioSistema)
+        public async Task<UsuarioSistema> Update(UsuarioSistema usuarioSistema)
         {
-            throw new NotImplementedException();
+            _context.Update(usuarioSistema);
+            await _context.SaveChangesAsync();
+
+            return usuarioSistema;
         }
     }
 }
