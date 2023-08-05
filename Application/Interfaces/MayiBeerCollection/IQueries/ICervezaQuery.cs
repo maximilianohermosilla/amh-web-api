@@ -5,8 +5,8 @@ namespace Application.Interfaces.MayiBeerCollection.IQueries
 {
     public interface ICervezaQuery
     {
-        Task<List<Cerveza>> GetAll();
-        Task<Cerveza> GetById(int? id);
-        Task<List<Cerveza>> GetAllFilter(BusquedaDTO busqueda);
+        Task<List<Cerveza>> GetAll(bool fullresponse);
+        Task<Cerveza> GetById(int? id, bool fullresponse);
+        Task<List<Cerveza>> GetAllFilter(BusquedaDTO busqueda, bool fullresponse);
     }
 }

@@ -1,11 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using System.Data;
-using AccessData;
+﻿using Microsoft.AspNetCore.Mvc;
 using amh_web_api.DTO;
-using Domain.Models.MayiBeerCollection;
 using Application.DTO.MayiBeerCollection;
 using Application.Interfaces.MayiBeerCollection.IServices;
 

@@ -10,7 +10,6 @@
         public int? IdCiudad { get; set; }
         public string? Observaciones { get; set; }
         public int Contenido { get; set; }
-        public string? imagen { get; set; }
-        public int? IdArchivo { get; set; }
+        public string? Imagen { get; set; }
     }
 }
