@@ -19,15 +19,4 @@
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\General\" />
-    <Folder Include="Commands\GestorExpedientes\" />
-    <Folder Include="Commands\GestorGastos\" />
-    <Folder Include="Commands\MayiBeerCollection\" />
-    <Folder Include="Queries\General\" />
-    <Folder Include="Queries\GestorExpedientes\" />
-    <Folder Include="Queries\GestorGastos\" />
-    <Folder Include="Queries\MayiBeerCollection\" />
-  </ItemGroup>
-
 </Project>

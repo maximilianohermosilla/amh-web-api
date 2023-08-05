@@ -9,9 +9,9 @@ namespace Application.Services.GestorExpedientes
     public class ExpedienteService : IExpedienteService
     {
         private readonly IExpedienteQuery _expedienteQuery;
-        private readonly IExpedienteCommand _expedienteCommand;
+        private readonly ISituacionRevistaCommand _expedienteCommand;
 
-        public ExpedienteService(IExpedienteQuery expedienteQuery, IExpedienteCommand expedienteCommand)
+        public ExpedienteService(IExpedienteQuery expedienteQuery, ISituacionRevistaCommand expedienteCommand)
         {
             _expedienteQuery = expedienteQuery;
             _expedienteCommand = expedienteCommand;

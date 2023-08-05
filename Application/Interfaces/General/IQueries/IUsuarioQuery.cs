@@ -4,6 +4,8 @@ namespace Application.Interfaces.General.IQueries
 {
     public interface IUsuarioQuery
     {
-        Task<IEnumerable<Usuario>> GetByMercaderiaId(int mercaderiaId);
+        Task<List<Usuario>> GetAll();
+        Task<Usuario> GetById(int? id);
+        Task<Usuario> GetByCredentials(string userName, string password);
     }
 }

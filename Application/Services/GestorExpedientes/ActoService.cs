@@ -9,9 +9,9 @@ namespace Application.Services.GestorExpedientes
     public class ActoService: IActoService
     {
         private readonly IActoQuery _actoQuery;
-        private readonly IActoCommand _actoCommand;
+        private readonly ISituacionRevistaCommand _actoCommand;
 
-        public ActoService(IActoQuery actoQuery, IActoCommand actoCommand)
+        public ActoService(IActoQuery actoQuery, ISituacionRevistaCommand actoCommand)
         {
             _actoQuery = actoQuery;
             _actoCommand = actoCommand;

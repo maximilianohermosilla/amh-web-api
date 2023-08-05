@@ -6,5 +6,6 @@ namespace Application.Interfaces.GestorExpedientes.IQueries
     {
         Task<List<Expediente>> GetAll();
         Task<Expediente> GetById(int? id);
+        Task<List<Expediente>> GetAllPending();
     }
 }

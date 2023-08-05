@@ -1,9 +1,11 @@
 ﻿using Domain.Models;
+using Domain.Models.MayiBeerCollection;
 
 namespace Application.Interfaces.General.IQueries
 {
     public interface ISistemaQuery
     {
-        Task<IEnumerable<Sistema>> GetByMercaderiaId(int mercaderiaId);
+        Task<List<Sistema>> GetAll();
+        Task<Sistema> GetById(int? id);
     }
 }
