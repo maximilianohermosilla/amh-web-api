@@ -30,49 +30,73 @@ using Application.Interfaces.MayiBeerCollection.IQueries;
 using Application.Services.MayiBeerCollection;
 using AccessData.Commands.MayiBeerCollection;
 using AccessData.Query.MayiBeerCollection;
+using Application.DTO.MayiBeerCollection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //ADD MAPERS
 builder.Services.AddAutoMapper(config =>
 {
-    //GENERAL
+    #region GENERAL
     config.CreateMap<Ciudad, CiudadResponse>();
     config.CreateMap<CiudadResponse, Ciudad>();
+
+    config.CreateMap<Ciudad, CiudadPaisResponse>();
+    config.CreateMap<CiudadPaisResponse, Ciudad>();
 
     config.CreateMap<Ciudad, CiudadRequest>();
     config.CreateMap<CiudadRequest, Ciudad>();
 
-    config.CreateMap<Sistema, SistemaDTO>();
-    config.CreateMap<SistemaDTO, Sistema>();
+    config.CreateMap<Sistema, SistemaResponse>();
+    config.CreateMap<SistemaResponse, Sistema>();
 
-    config.CreateMap<Usuario, UsuarioDTO>();
-    config.CreateMap<UsuarioDTO, Usuario>();
+    config.CreateMap<Sistema, SistemaRequest>();
+    config.CreateMap<SistemaRequest, Sistema>();
+
+    config.CreateMap<Usuario, UsuarioResponse>();
+    config.CreateMap<UsuarioResponse, Usuario>();
+
+    config.CreateMap<Usuario, UsuarioRequest>();
+    config.CreateMap<UsuarioRequest, Usuario>();
 
     config.CreateMap<Usuario, UsuarioLoginDTO>();
     config.CreateMap<UsuarioLoginDTO, Usuario>();
 
-    config.CreateMap<UsuarioSistema, UsuarioSistemaDTO>();
-    config.CreateMap<UsuarioSistemaDTO, UsuarioSistema>();
+    config.CreateMap<UsuarioSistema, UsuarioSistemaResponse>();
+    config.CreateMap<UsuarioSistemaResponse, UsuarioSistema>();
 
-    config.CreateMap<Pais, PaisDTO>();
-    config.CreateMap<PaisDTO, Pais>();
+    config.CreateMap<UsuarioSistema, UsuarioSistemaRequest>();
+    config.CreateMap<UsuarioSistemaRequest, UsuarioSistema>();
+
+    config.CreateMap<Pais, PaisRequest>();
+    config.CreateMap<PaisRequest, Pais>();
 
     config.CreateMap<Pais, PaisResponse>();
     config.CreateMap<PaisResponse, Pais>();
 
     config.CreateMap<Pais, PaisCiudadResponse>();
     config.CreateMap<PaisCiudadResponse, Pais>();
+    #endregion
+      
+    #region MAYIBEERCOLLECTION
+    config.CreateMap<Cerveza, CervezaRequest>();
+    config.CreateMap<CervezaRequest, Cerveza>();
 
-    //MAYIBEERCOLLECTION
-    config.CreateMap<Cerveza, CervezaDTO>();
-    config.CreateMap<CervezaDTO, Cerveza>();    
+    config.CreateMap<Estilo, EstiloRequest>();
+    config.CreateMap<EstiloRequest, Estilo>();
 
-    config.CreateMap<Estilo, EstiloDTO>();
-    config.CreateMap<EstiloDTO, Estilo>();
+    config.CreateMap<Marca, MarcaRequest>();
+    config.CreateMap<MarcaRequest, Marca>();
 
-    config.CreateMap<Marca, MarcaDTO>();
-    config.CreateMap<MarcaDTO, Marca>();
+    config.CreateMap<Cerveza, CervezaResponse>();
+    config.CreateMap<CervezaResponse, Cerveza>();
+
+    config.CreateMap<Estilo, EstiloResponse>();
+    config.CreateMap<EstiloResponse, Estilo>();
+
+    config.CreateMap<Marca, MarcaResponse>();
+    config.CreateMap<MarcaResponse, Marca>(); 
+    #endregion
 
     //GESTOR EXPEDIENTES
     config.CreateMap<Expediente, ExpedienteDTO>();
@@ -91,7 +115,6 @@ builder.Services.AddAutoMapper(config =>
 }, typeof(Program));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

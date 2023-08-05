@@ -1,9 +1,8 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using AccessData;
+﻿using Microsoft.AspNetCore.Mvc;
 using amh_web_api.DTO;
-using Domain.Models;
+using Application.Interfaces.General.IServices;
+using Application.DTO.General;
+using Azure.Core;
 
 #nullable disable
 namespace amh_web_api.Controllers.General
@@ -12,197 +11,136 @@ namespace amh_web_api.Controllers.General
     [ApiController]
     public class PaisController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<PaisController> _logger;
+        private readonly IPaisService _service;
 
-        public PaisController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<PaisController> logger)
+        public PaisController(IPaisService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<PaisDTO>> Pais()
-        {
-            List<Pais> lst = (from tbl in _contexto.Pais where tbl.Id > 0 select new Pais() { Id = tbl.Id, Nombre = tbl.Nombre, Imagen = tbl.Imagen }).ToList();
-
-            List<PaisDTO> _paises = _mapper.Map<List<PaisDTO>>(lst);
-
-            foreach (var item in _paises)
-            {
-                //List<Ciudad> _ciudades = (from tbl in _contexto.Ciudad where tbl.IdPais == item.Id select tbl).ToList();
-                //if (_ciudades != null)
-                //{
-                //    item.ciudades = _ciudades;
-                //}
-
-                //Archivo _archivo = (from h in _contexto.Archivo where h.Id == item.IdArchivo select h).FirstOrDefault();
-                //if (_archivo != null)
-                //{
-                //    string stringArchivo = Encoding.ASCII.GetString(_archivo.Archivo1);
-                //    item.Imagen = stringArchivo;
-                //}
-            }
-
-            return _paises;
-        }
-
-        [HttpGet("listarProxy/")]
-        public ActionResult<IEnumerable<PaisDTO>> PaisesProxy()
-        {
-            List<Pais> lst = (from tbl in _contexto.Pais where tbl.Id > 0 select new Pais() { Id = tbl.Id, Nombre = tbl.Nombre }).OrderBy(e => e.Nombre).ToList();
-
-            List<PaisDTO> _paises = _mapper.Map<List<PaisDTO>>(lst);
-
-            foreach (var item in _paises)
-            {
-                //List<Ciudad> _ciudades = (from tbl in _contexto.Ciudad where tbl.IdPais == item.Id select tbl).ToList();
-                //if (_ciudades != null)
-                //{
-                //    item.ciudades = _ciudades;
-                //}
-            }
-
-            return _paises;
-        }
-
-        [HttpGet("buscar/{PaisId}")]
-        public ActionResult<PaisDTO> Pais(int PaisId)
-        {
-
-            var cl = (from tbl in _contexto.Pais where tbl.Id == PaisId select new Pais() { Id = tbl.Id, Nombre = tbl.Nombre }).FirstOrDefault();
-            if (cl == null)
-            {
-                return NotFound(PaisId);
-            }
-
-            PaisDTO item = _mapper.Map<PaisDTO>(cl);
-
-            //Archivo _archivo = (from h in _contexto.Archivo where h.Id == item.IdArchivo select h).FirstOrDefault();
-
-            //if (_archivo != null)
-            //{
-            //    string stringArchivo = Encoding.ASCII.GetString(_archivo.Archivo1);
-            //    item.Imagen = stringArchivo;
-            //}
-
-            _logger.LogWarning("Búsqueda de País Id: " + PaisId + ". Resultados: " + item.Nombre);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(PaisDTO nuevoPais)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                Pais _pais = _mapper.Map<Pais>(nuevoPais);
+                var response = await _service.GetAll();
 
-                //if (nuevoPais.Imagen != null)
-                //{
-                //    byte[] bytes = Encoding.ASCII.GetBytes(nuevoPais.Imagen);
-                //    Archivo newArch = new Archivo() { Archivo1 = bytes };
-                //    _contexto.Archivo.Add(newArch);
-                //    _contexto.SaveChanges();
-                //    _pais.IdArchivo = newArch.Id;
-                //}
-
-                _contexto.Pais.Add(_pais);
-                _contexto.SaveChanges();
-
-                nuevoPais.Id = _pais.Id;
-
-                _logger.LogWarning("Se insertó un nuevo país: " + nuevoPais.Id + ". Nombre: " + nuevoPais.Nombre);
-                return Ok(nuevoPais);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Ocurrió un error al insertar el país: " + nuevoPais.Nombre + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(PaisDTO actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                Pais _pais = (from h in _contexto.Pais where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (_pais == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = _pais.Nombre;
-                _pais.Nombre = actualiza.Nombre;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                //if (actualiza.Imagen != null)
-                //{
-                //    byte[] bytes = Encoding.ASCII.GetBytes(actualiza.Imagen);
-                //    Archivo arch = (from a in _contexto.Archivo where a.Id == _pais.IdArchivo select a).FirstOrDefault();
-
-                //    if (arch == null)
-                //    {
-                //        Archivo newArch = new Archivo() { Archivo1 = bytes };
-                //        _contexto.Archivo.Add(newArch);
-                //        _contexto.SaveChanges();
-                //        _pais.IdArchivo = newArch.Id;
-                //    }
-                //    else
-                //    {
-                //        arch.Archivo1 = bytes;
-                //        _contexto.Archivo.Update(arch);
-                //        _contexto.SaveChanges();
-                //    }
-                //}
-
-                _contexto.Pais.Update(_pais);
-                _contexto.SaveChanges();
-                _logger.LogWarning("Se actualizó el país: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ocurrió un error al actualizar el país: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{PaisId}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int PaisId)
+        [HttpGet("IdPais")]
+        public async Task<IActionResult> GetById(int IdPais)
         {
-            Pais _pais = (from h in _contexto.Pais where h.Id == PaisId select h).FirstOrDefault();
-
-            if (_pais == null)
+            try
             {
-                return NotFound("No se encontró el elemento" + PaisId);
+                var response = await _service.GetById(IdPais);
+
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> nuevo(PaisRequest request)
+        {
+            try
+            {
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre del país no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar el país. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
             }
 
-            List<Ciudad> _ciudades = (from tbl in _contexto.Ciudad where tbl.IdPais == PaisId select tbl).ToList();
-            if (_ciudades.Count() > 0)
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(PaisRequest request, int id)
+        {
+            try
             {
-                return BadRequest("No se puede eliminar el país porque tiene una o más ciudades asociadas");
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado el pais exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar el pais" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre del pais no puede estar vacío" }) { StatusCode = 400 };
+                }
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
 
-            //Archivo arch = (from a in _contexto.Archivo where a.Id == _pais.IdArchivo select a).FirstOrDefault();
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
 
-            //if (arch != null)
-            //{
-            //    _contexto.Archivo.Remove(arch);
-            //    _contexto.SaveChanges();
-            //}
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado el pais exitosamente.", Response = response });
+                }
 
-            _contexto.Pais.Remove(_pais);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó el país: " + PaisId + ", " + _pais.Nombre);
-            return Ok(PaisId);
+                return new JsonResult(new { Message = "No se encuentra el pais" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
         }
     }
 }

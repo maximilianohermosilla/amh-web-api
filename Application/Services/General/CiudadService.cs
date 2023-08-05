@@ -51,7 +51,7 @@ namespace Application.Services.General
                 await _ciudadCommand.Delete(ciudad);
                 cuidadResponse = _mapper.Map<CiudadResponse>(ciudad);
 
-                _logger.LogWarning("Se eliminó la ciudad: " + id + ", " + ciudad.Nombre);
+                _logger.LogInformation("Se eliminó la ciudad: " + id + ", " + ciudad.Nombre);
             }
             catch (Exception ex)
             {
@@ -122,7 +122,7 @@ namespace Application.Services.General
                 ciudad = await _ciudadCommand.Insert(ciudad);
                 cuidadResponse = _mapper.Map<CiudadResponse>(ciudad);
 
-                _logger.LogWarning("Se insertó una nueva ciudad: " + ciudad.Id + ". Nombre: " + ciudad.Nombre);                
+                _logger.LogInformation("Se insertó una nueva ciudad: " + ciudad.Id + ". Nombre: " + ciudad.Nombre);                
             }
             catch (Exception ex)
             {

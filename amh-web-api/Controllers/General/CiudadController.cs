@@ -4,6 +4,7 @@ using AccessData;
 using amh_web_api.DTO;
 using Application.Interfaces.General.IServices;
 using Application.DTO.General;
+using Azure.Core;
 
 namespace amh_web_api.Controllers.General
 {
@@ -44,11 +45,16 @@ namespace amh_web_api.Controllers.General
 
         [HttpPost]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> nuevo(CiudadRequest nuevo)
+        public async Task<IActionResult> Insert(CiudadRequest request)
         {
             try
-            {                
-                var response = await _service.Insert(nuevo);
+            {
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre de la ciudad no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
 
                 if (response.response == null)
                 {
