@@ -10,7 +10,7 @@ public partial class Ciudad
 
     public int IdPais { get; set; }
 
-    public virtual ICollection<Cerveza> Cerveza { get; } = new List<Cerveza>();
+    public virtual ICollection<Cerveza> Cervezas { get; } = new List<Cerveza>();
 
-    public virtual Pais IdPaisNavigation { get; set; } = null!;
+    public virtual Pais Pais { get; set; } = null!;
 }

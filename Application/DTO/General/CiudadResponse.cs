@@ -8,6 +8,6 @@ namespace Application.DTO.General
         public int Id { get; set; }
         public string? Nombre { get; set; }
         public int IdPais { get; set; }
-        public PaisResponse IdPaisNavigation { get; set; }
+        public PaisCiudadResponse? Pais { get; set; }
     }
 }

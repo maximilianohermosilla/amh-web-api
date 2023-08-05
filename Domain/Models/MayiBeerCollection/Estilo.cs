@@ -8,5 +8,5 @@ public partial class Estilo
 
     public string? Imagen { get; set; }
 
-    public virtual ICollection<Cerveza> Cerveza { get; } = new List<Cerveza>();
+    public virtual ICollection<Cerveza> Cervezas { get; } = new List<Cerveza>();
 }

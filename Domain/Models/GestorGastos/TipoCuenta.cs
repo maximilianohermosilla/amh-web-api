@@ -6,5 +6,5 @@ public partial class TipoCuenta
 
     public string Nombre { get; set; } = null!;
 
-    public virtual ICollection<Cuenta> Cuenta { get; } = new List<Cuenta>();
+    public virtual ICollection<Cuenta> Cuentas { get; } = new List<Cuenta>();
 }

@@ -7,9 +7,7 @@ namespace Application.Interfaces.General.IServices
 {
     public interface ICiudadService
     {
-        Task<ResponseModel> GetAll();
-        Task<ResponseModel> GetById(int? id);
-        Task<ResponseModel> GetAllByCountry(int? idPais);
+        Task<ResponseModel> GetAllByCountryOrCity(int? idPais, int? idCiudad);
         Task<ResponseModel> Insert(CiudadRequest entity);
         Task<ResponseModel> Update(CiudadRequest entity, int id);
         Task<ResponseModel> Delete(int id);

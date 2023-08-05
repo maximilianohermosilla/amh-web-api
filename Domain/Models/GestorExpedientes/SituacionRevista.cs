@@ -6,5 +6,5 @@ public partial class SituacionRevista
 
     public string Nombre { get; set; } = null!;
 
-    public virtual ICollection<Expediente> Expediente { get; } = new List<Expediente>();
+    public virtual ICollection<Expediente> Expedientes { get; } = new List<Expediente>();
 }

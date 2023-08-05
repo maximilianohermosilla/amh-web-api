@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Data;
 using AccessData;
-using Domain.Models.MayiBeerCollection;
 using amh_web_api.DTO;
-using Domain.Models;
 using Application.Interfaces.General.IServices;
+using Application.DTO.General;
 
 namespace amh_web_api.Controllers.General
 {
@@ -14,31 +11,27 @@ namespace amh_web_api.Controllers.General
     [ApiController]
     public class CiudadController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<CiudadController> _logger;
         private readonly ICiudadService _service;
 
-        public CiudadController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<CiudadController> logger, ICiudadService service)
-        {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+        public CiudadController(ICiudadService service)
+        {     
             _service = service;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllByCountryOrCity(int? PaisId = null, int? CiudadId = null)
         {
             try
             {
-                var response = await _service.GetAll();
+                var response = await _service.GetAllByCountryOrCity(PaisId, CiudadId);
 
                 if (response.statusCode == 400)
                 {
                     return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
                 }
 
                 return Ok(response.response);
@@ -49,108 +42,76 @@ namespace amh_web_api.Controllers.General
             }
         }
 
-        [HttpGet("buscarPais/{PaisId}")]
-        public ActionResult<IEnumerable<Ciudad>> CiudadesByPais(int PaisId)
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> nuevo(CiudadRequest nuevo)
         {
-            Pais _pais = (from h in _contexto.Pais where h.Id == PaisId select h).FirstOrDefault();
-            List<Ciudad> lst = (from tbl in _contexto.Ciudad where tbl.IdPais == PaisId select tbl).ToList();
-            List<CiudadDTO> ciudadesDTO = _mapper.Map<List<CiudadDTO>>(lst);
+            try
+            {                
+                var response = await _service.Insert(nuevo);
 
-
-            if (lst == null || _pais == null)
-            {
-                return NotFound(PaisId);
-            }
-
-
-            foreach (var item in ciudadesDTO)
-            {
-                if (_pais != null)
+                if (response.response == null)
                 {
-                    item.PaisNombre = _pais.Nombre;
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la ciudad. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+            
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(CiudadRequest request, int id)
+        {
+            try
+            {    
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado la ciudad exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar la ciudad" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre de la ciudad no puede estar vacío" }) { StatusCode = 400 };
                 }
             }
-
-            return Ok(ciudadesDTO);
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }            
         }
 
-        [HttpGet("buscar/{CiudadId}")]
-        public ActionResult<Ciudad> Ciudades(int CiudadId)
+        [HttpDelete("{CiudadId}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int CiudadId)
         {
-            Ciudad cl = (from tbl in _contexto.Ciudad where tbl.Id == CiudadId select tbl).FirstOrDefault();
-
-            if (cl == null)
+            try
             {
-                return NotFound(CiudadId);
-            }
-            CiudadDTO ciudadDTO = _mapper.Map<CiudadDTO>(cl);
+                var response = await _service.Delete(CiudadId);
 
-            Pais _pais = (from h in _contexto.Pais where h.Id == cl.IdPais select h).FirstOrDefault();
-            if (_pais != null)
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado la ciudad exitosamente.", Response = response });
+                }
+
+                return new JsonResult(new { Message = "No se encuentra la ciudad" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
             {
-                ciudadDTO.PaisNombre = _pais.Nombre;
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
             }
-
-            _logger.LogWarning("Búsqueda de Marca Id: " + CiudadId + ". Resultados: " + ciudadDTO.Nombre + ", " + _pais.Nombre);
-            return Ok(ciudadDTO);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(CiudadDTO nuevo)
-        {
-            Ciudad _ciudad = _mapper.Map<Ciudad>(nuevo);
-
-            _contexto.Ciudad.Add(_ciudad);
-            _contexto.SaveChanges();
-
-            nuevo.Id = _ciudad.Id;
-
-            _logger.LogWarning("Se insertó una nueva ciudad: " + nuevo.Id + ". Nombre: " + nuevo.Nombre);
-            return Ok(nuevo);
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(CiudadDTO actualiza)
-        {
-            string oldName = "";
-            Ciudad _ciudad = (from h in _contexto.Ciudad where h.Id == actualiza.Id select h).FirstOrDefault();
-
-            if (_ciudad == null)
-            {
-                return NotFound(actualiza);
-            }
-            oldName = _ciudad.Nombre;
-            _ciudad.Nombre = actualiza.Nombre;
-            _ciudad.IdPais = actualiza.IdPais;
-
-            _contexto.Ciudad.Update(_ciudad);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se actualizó la ciudad: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-            return Ok(actualiza);
-        }
-        [HttpDelete("eliminar/{CiudadId}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int CiudadId)
-        {
-            Ciudad _ciudad = (from h in _contexto.Ciudad where h.Id == CiudadId select h).FirstOrDefault();
-
-            if (_ciudad == null)
-            {
-                return NotFound(CiudadId);
-            }
-
-            List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdCiudad == CiudadId select tbl).ToList();
-            if (_cervezas.Count() > 0)
-            {
-                return BadRequest("No se puede eliminar la ciudad porque tiene una o más cervezas asociadas");
-            }
-
-            _contexto.Ciudad.Remove(_ciudad);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó la ciudad: " + CiudadId + ", " + _ciudad.Nombre);
-            return Ok(CiudadId);
         }
     }
 }

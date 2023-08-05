@@ -28,13 +28,13 @@ public partial class Registro
 
     public DateTime? FechaPago { get; set; }
 
-    public virtual Cuenta IdCuentaNavigation { get; set; } = null!;
+    public virtual Cuenta Cuenta { get; set; } = null!;
 
-    public virtual Empresa? IdEmpresaNavigation { get; set; }
+    public virtual Empresa? Empresa { get; set; }
 
-    public virtual RegistroVinculado? IdRegistroVinculadoNavigation { get; set; }
+    public virtual RegistroVinculado? RegistroVinculado { get; set; }
 
-    public virtual Suscripcion? IdSuscripcionNavigation { get; set; }
+    public virtual Suscripcion? Suscripcion { get; set; }
 
-    public virtual Usuario? IdUsuarioNavigation { get; set; }
+    public virtual Usuario? Usuario { get; set; }
 }

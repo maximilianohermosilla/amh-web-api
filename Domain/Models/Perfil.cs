@@ -6,5 +6,5 @@ public partial class Perfil
 
     public string Descripcion { get; set; } = null!;
 
-    public virtual ICollection<Usuario> Usuario { get; } = new List<Usuario>();
+    public virtual ICollection<Usuario> Usuarios { get; } = new List<Usuario>();
 }

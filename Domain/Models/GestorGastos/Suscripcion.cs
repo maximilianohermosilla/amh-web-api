@@ -14,7 +14,7 @@ public partial class Suscripcion
 
     public int? IdUsuario { get; set; }
 
-    public virtual Usuario? IdUsuarioNavigation { get; set; }
+    public virtual Usuario? Usuario { get; set; }
 
-    public virtual ICollection<Registro> Registro { get; } = new List<Registro>();
+    public virtual ICollection<Registro> Registros { get; } = new List<Registro>();
 }

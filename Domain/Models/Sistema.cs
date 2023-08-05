@@ -6,5 +6,5 @@ public partial class Sistema
 
     public string Descripcion { get; set; } = null!;
 
-    public virtual ICollection<UsuarioSistema> UsuarioSistema { get; } = new List<UsuarioSistema>();
+    public virtual ICollection<UsuarioSistema> UsuariosSistema { get; } = new List<UsuarioSistema>();
 }

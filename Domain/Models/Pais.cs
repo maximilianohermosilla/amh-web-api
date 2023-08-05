@@ -8,5 +8,5 @@ public partial class Pais
 
     public string? Imagen { get; set; }
 
-    public virtual ICollection<Ciudad> Ciudad { get; } = new List<Ciudad>();
+    public virtual ICollection<Ciudad> Ciudades { get; } = new List<Ciudad>();
 }

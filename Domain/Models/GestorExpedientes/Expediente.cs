@@ -30,9 +30,9 @@ public partial class Expediente
 
     public string? Observaciones { get; set; }
 
-    public virtual Acto? IdActoNavigation { get; set; }
+    public virtual Acto? Acto { get; set; }
 
-    public virtual Caratula? IdCaratulaNavigation { get; set; }
+    public virtual Caratula? Caratula { get; set; }
 
-    public virtual SituacionRevista? IdSituacionRevistaNavigation { get; set; }
+    public virtual SituacionRevista? SituacionRevista { get; set; }
 }

@@ -6,5 +6,5 @@ public partial class Banco
 
     public string Nombre { get; set; } = null!;
 
-    public virtual ICollection<Tarjeta> Tarjeta { get; } = new List<Tarjeta>();
+    public virtual ICollection<Tarjeta> Tarjetas { get; } = new List<Tarjeta>();
 }

@@ -37,6 +37,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(config =>
 {
     //GENERAL
+    config.CreateMap<Ciudad, CiudadResponse>();
+    config.CreateMap<CiudadResponse, Ciudad>();
+
+    config.CreateMap<Ciudad, CiudadRequest>();
+    config.CreateMap<CiudadRequest, Ciudad>();
+
     config.CreateMap<Sistema, SistemaDTO>();
     config.CreateMap<SistemaDTO, Sistema>();
 
@@ -55,14 +61,12 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<Pais, PaisResponse>();
     config.CreateMap<PaisResponse, Pais>();
 
+    config.CreateMap<Pais, PaisCiudadResponse>();
+    config.CreateMap<PaisCiudadResponse, Pais>();
+
     //MAYIBEERCOLLECTION
     config.CreateMap<Cerveza, CervezaDTO>();
-    config.CreateMap<CervezaDTO, Cerveza>();
-
-    config.CreateMap<Ciudad, CiudadResponse>();
-    //config.CreateMap<Ciudad, CiudadResponse>();
-    config.CreateMap<CiudadResponse, Ciudad>();
-    //config.CreateMap<CiudadResponse, Ciudad>();
+    config.CreateMap<CervezaDTO, Cerveza>();    
 
     config.CreateMap<Estilo, EstiloDTO>();
     config.CreateMap<EstiloDTO, Estilo>();

@@ -20,15 +20,15 @@ public partial class Usuario
 
     public int? IdPerfil { get; set; }
 
-    public virtual ICollection<Cuenta> Cuenta { get; } = new List<Cuenta>();
+    public virtual ICollection<Cuenta> Cuentas { get; } = new List<Cuenta>();
 
-    public virtual Perfil? IdPerfilNavigation { get; set; }
+    public virtual Perfil? Perfil { get; set; }
 
-    public virtual ICollection<Registro> Registro { get; } = new List<Registro>();
+    public virtual ICollection<Registro> Registros { get; } = new List<Registro>();
 
-    public virtual ICollection<Suscripcion> Suscripcion { get; } = new List<Suscripcion>();
+    public virtual ICollection<Suscripcion> Suscripciones { get; } = new List<Suscripcion>();
 
-    public virtual ICollection<Tarjeta> Tarjeta { get; } = new List<Tarjeta>();
+    public virtual ICollection<Tarjeta> Tarjetas { get; } = new List<Tarjeta>();
 
-    public virtual ICollection<UsuarioSistema> UsuarioSistema { get; } = new List<UsuarioSistema>();
+    public virtual ICollection<UsuarioSistema> UsuariosSistema { get; } = new List<UsuarioSistema>();
 }

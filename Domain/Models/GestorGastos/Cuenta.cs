@@ -14,11 +14,11 @@ public partial class Cuenta
 
     public bool? Habilitado { get; set; }
 
-    public virtual Tarjeta? IdTarjetaNavigation { get; set; }
+    public virtual Tarjeta? Tarjeta { get; set; }
 
-    public virtual TipoCuenta IdTipoCuentaNavigation { get; set; } = null!;
+    public virtual TipoCuenta TipoCuenta { get; set; } = null!;
 
-    public virtual Usuario IdUsuarioNavigation { get; set; } = null!;
+    public virtual Usuario Usuario { get; set; } = null!;
 
-    public virtual ICollection<Registro> Registro { get; } = new List<Registro>();
+    public virtual ICollection<Registro> Registros { get; } = new List<Registro>();
 }

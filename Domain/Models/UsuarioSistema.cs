@@ -8,7 +8,7 @@ public partial class UsuarioSistema
 
     public int IdSistema { get; set; }
 
-    public virtual Sistema IdSistemaNavigation { get; set; } = null!;
+    public virtual Sistema Sistema { get; set; } = null!;
 
-    public virtual Usuario IdUsuarioNavigation { get; set; } = null!;
+    public virtual Usuario Usuario { get; set; } = null!;
 }

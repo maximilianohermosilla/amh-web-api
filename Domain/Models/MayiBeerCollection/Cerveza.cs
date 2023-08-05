@@ -22,9 +22,9 @@ public partial class Cerveza
 
     public string? Imagen { get; set; }
 
-    public virtual Ciudad? IdCiudadNavigation { get; set; }
+    public virtual Ciudad? Ciudad { get; set; }
 
-    public virtual Estilo? IdEstiloNavigation { get; set; }
+    public virtual Estilo? Estilo { get; set; }
 
-    public virtual Marca IdMarcaNavigation { get; set; } = null!;
+    public virtual Marca Marca { get; set; } = null!;
 }

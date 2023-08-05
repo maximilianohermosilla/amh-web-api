@@ -10,5 +10,5 @@ public partial class RegistroVinculado
 
     public decimal ValorFinal { get; set; }
 
-    public virtual ICollection<Registro> Registro { get; } = new List<Registro>();
+    public virtual ICollection<Registro> Registros { get; } = new List<Registro>();
 }

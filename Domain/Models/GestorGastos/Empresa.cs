@@ -6,5 +6,5 @@ public partial class Empresa
 
     public string Nombre { get; set; } = null!;
 
-    public virtual ICollection<Registro> Registro { get; } = new List<Registro>();
+    public virtual ICollection<Registro> Registros { get; } = new List<Registro>();
 }
