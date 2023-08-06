@@ -1,5 +1,7 @@
 ﻿using AccessData;
 using amh_web_api.DTO;
+using Application.DTO.GestorGastos;
+using Application.Interfaces.GestorGastos.IServices;
 using AutoMapper;
 using Domain.Models.GestorGastos;
 using Microsoft.AspNetCore.Authorization;
@@ -12,162 +14,141 @@ namespace amh_web_api.Controllers.GestorGastos
     [ApiController]
     public class CuentaController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<CuentaController> _logger;
+        private readonly ICuentaService _service;
 
-        public CuentaController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<CuentaController> logger)
+        public CuentaController(ICuentaService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<Cuenta>> Cuentas()
-        {
-            var lst = (from tbl in _contexto.Cuenta where tbl.Id > 0 select tbl).ToList();
-            List<CuentaDTO> cuentasDTO = _mapper.Map<List<CuentaDTO>>(lst);
-
-            foreach (var item in cuentasDTO)
-            {
-                var tarjeta = (from h in _contexto.Tarjeta where h.Id == item.IdTarjeta select h).FirstOrDefault();
-                if (tarjeta != null)
-                {
-                    item.TarjetaNombre = tarjeta.Numero;
-                }
-
-                var tipoCuenta = (from h in _contexto.TipoCuenta where h.Id == item.IdTipoCuenta select h).FirstOrDefault();
-                if (tipoCuenta != null)
-                {
-                    item.TipoCuentaNombre = tipoCuenta.Nombre;
-                }
-
-                var usuario = (from h in _contexto.Usuario where h.Id == item.IdUsuario select h).FirstOrDefault();
-                if (usuario != null)
-                {
-                    item.UsuarioNombre = usuario.Nombre;
-                }
-            }
-            
-            return Ok(cuentasDTO);
-        }
-
-
-        [HttpGet("buscar/{Id}")]
-        public ActionResult<Cuenta> Cuenta(int Id)
-        {
-            var cuenta = (from tbl in _contexto.Cuenta where tbl.Id == Id select tbl).FirstOrDefault();
-            CuentaDTO item = _mapper.Map<CuentaDTO>(cuenta);
-            if (item == null)
-            {
-                return NotFound(Id);
-            }
-
-            var tarjeta = (from h in _contexto.Tarjeta where h.Id == item.IdTarjeta select h).FirstOrDefault();
-            if (tarjeta != null)
-            {
-                item.TarjetaNombre = tarjeta.Numero;
-            }
-
-            var tipoCuenta = (from h in _contexto.TipoCuenta where h.Id == item.IdTipoCuenta select h).FirstOrDefault();
-            if (tipoCuenta != null)
-            {
-                item.TipoCuentaNombre = tipoCuenta.Nombre;
-            }
-
-            var usuario = (from h in _contexto.Usuario where h.Id == item.IdUsuario select h).FirstOrDefault();
-            if (usuario != null)
-            {
-                item.UsuarioNombre = usuario.Nombre;
-            }
-
-            _logger.LogWarning("Búsqueda de cuenta Id: " + Id + ". Resultados: " + item.Nombre);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(CuentaDTO nuevo)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                Cuenta cuenta = _mapper.Map<Cuenta>(nuevo);
-                _contexto.Cuenta.Add(cuenta);
-                _contexto.SaveChanges();
+                var response = await _service.GetAll();
 
-                nuevo.Id = nuevo.Id;
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                _logger.LogWarning("Se insertó una nueva cuenta: " + nuevo.Id + ". Nombre: " + nuevo.Nombre);
-                return Ok(nuevo);
-
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ocurrió un error al insertar la cuenta: " + nuevo.Nombre + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
-
-
         }
 
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(Cuenta actualiza)
+        [HttpGet("IdCuenta")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            string oldName = "";
             try
             {
-                var item = (from h in _contexto.Cuenta where h.Id == actualiza.Id select h).FirstOrDefault();
+                var response = await _service.GetById(Id);
 
-                if (item == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = item.Nombre;
-                item.Nombre = item.Nombre;
-                item.IdTipoCuenta = actualiza.IdTipoCuenta;
-                item.IdTarjeta = actualiza.IdTarjeta;
-                item.IdUsuario = actualiza.IdUsuario;
-                item.Habilitado = actualiza.Habilitado;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                _contexto.Cuenta.Update(item);
-                _contexto.SaveChanges();
-                _logger.LogWarning("Se actualizó la cuenta: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ocurrió un error al actualizar la cuenta: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{Id}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int Id)
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(CuentaRequest request)
         {
-            var item = (from h in _contexto.Cuenta where h.Id == Id select h).FirstOrDefault();
-
-            if (item == null)
+            try
             {
-                return NotFound(Id);
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre dla cuenta no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la cuenta. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
             }
 
-            List<Registro> lista = (from tbl in _contexto.Registro where tbl.IdCuenta == Id select tbl).ToList();
-            if (lista.Count() > 0)
-            {
-                return BadRequest("No se puede eliminar la cuenta porque tiene uno o más registros asociados");
-            }
-
-
-            _contexto.Cuenta.Remove(item);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó la cuenta: " + Id + ", " + item.Nombre);
-            return Ok(Id);
         }
 
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(CuentaRequest request, int id)
+        {
+            try
+            {
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado la cuenta exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar la cuenta" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre dla cuenta no puede estar vacío" }) { StatusCode = 400 };
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
+
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado la cuenta exitosamente.", Response = response });
+                }
+
+                if (response != null && response.statusCode >= 400 && response.statusCode < 500)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return new JsonResult(new { Message = "No se encuentra la cuenta" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
+        }
     }
 }

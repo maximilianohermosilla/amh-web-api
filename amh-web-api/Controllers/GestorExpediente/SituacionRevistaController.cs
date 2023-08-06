@@ -1,7 +1,6 @@
-﻿using AccessData;
-using AutoMapper;
-using Domain.Models.GestorExpedientes;
-using Microsoft.AspNetCore.Authorization;
+﻿using amh_web_api.DTO;
+using Application.DTO.GestorExpedientes;
+using Application.Interfaces.GestorExpedientes.IServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace amh_web_api.Controllers.GestorExpediente
@@ -10,115 +9,141 @@ namespace amh_web_api.Controllers.GestorExpediente
     [ApiController]
     public class SituacionRevistaController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<SituacionRevistaController> _logger;
+        private readonly ISituacionRevistaService _service;
 
-        public SituacionRevistaController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<SituacionRevistaController> logger)
+        public SituacionRevistaController(ISituacionRevistaService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<SituacionRevista>> SituacionesRevista()
-        {
-            var lst = (from tbl in _contexto.SituacionRevista where tbl.Id > 0 select new SituacionRevista() { Id = tbl.Id, Nombre = tbl.Nombre }).ToList();
-
-            return Ok(lst);
-        }
-
-
-        [HttpGet("buscar/{IdSituacionRevista}")]
-        public ActionResult<SituacionRevista> SituacionesRevista(int IdSituacionRevista)
-        {
-            var item = (from tbl in _contexto.SituacionRevista where tbl.Id == IdSituacionRevista select new SituacionRevista() { Id = tbl.Id, Nombre = tbl.Nombre }).FirstOrDefault();
-            if (item == null)
-            {
-                return NotFound(IdSituacionRevista);
-            }
-
-            //_logger.LogWarning("Búsqueda de situacion de revista Id: " + _id + ". Resultados: " + item.Nombre);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(SituacionRevista nuevo)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                _contexto.SituacionRevista.Add(nuevo);
-                _contexto.SaveChanges();
+                var response = await _service.GetAll();
 
-                nuevo.Id = nuevo.Id;
-
-                //_logger.LogWarning("Se insertó una situacion de revista: " + nuevo.Id + ". Nombre: " + nuevo.Nombre);
-                return Ok(nuevo);
-
-            }
-            catch (Exception ex)
-            {
-                //_logger.LogError("Ocurrió un error al insertar la situacion de revista: " + nuevo.Nombre + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-
-
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(SituacionRevista actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                var item = (from h in _contexto.SituacionRevista where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (item == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = item.Nombre;
-                item.Nombre = actualiza.Nombre;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                _contexto.SituacionRevista.Update(item);
-                _contexto.SaveChanges();
-                //_logger.LogWarning("Se actualizó la situacion de revista: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                //_logger.LogError("Ocurrió un error al actualizar la situacion de revista: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{IdSituacionRevista}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int IdSituacionRevista)
+        [HttpGet("IdSituacionRevista")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            var item = (from h in _contexto.SituacionRevista where h.Id == IdSituacionRevista select h).FirstOrDefault();
-
-            if (item == null)
+            try
             {
-                return NotFound(IdSituacionRevista);
+                var response = await _service.GetById(Id);
+
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(SituacionRevistaRequest request)
+        {
+            try
+            {
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre de la situacion revista no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la situacion revista. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
             }
 
-            List<Expediente> expedientes = (from tbl in _contexto.Expediente where tbl.IdSituacionRevista == IdSituacionRevista select tbl).ToList();
-            if (expedientes.Count() > 0)
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(SituacionRevistaRequest request, int id)
+        {
+            try
             {
-                return BadRequest("No se puede eliminar la situacion de revista porque tiene uno o más expedientes asociados");
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado la situacion revista exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar la situacion revista" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre de la situacion revista no puede estar vacío" }) { StatusCode = 400 };
+                }
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
 
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
 
-            _contexto.SituacionRevista.Remove(item);
-            _contexto.SaveChanges();
-            //_logger.LogWarning("Se eliminó el acto: " + IdCaratula + ", " + item.Nombre);
-            return Ok(IdSituacionRevista);
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado la situacion revista exitosamente.", Response = response });
+                }
+
+                if (response != null && response.statusCode >= 400 && response.statusCode < 500)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return new JsonResult(new { Message = "No se encuentra la situacion revista" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
         }
     }
 }

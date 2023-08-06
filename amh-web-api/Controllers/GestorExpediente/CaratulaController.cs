@@ -1,9 +1,7 @@
-﻿using AccessData;
-using AutoMapper;
-using Domain.Models.GestorExpedientes;
-using Microsoft.AspNetCore.Authorization;
+﻿using amh_web_api.DTO;
+using Application.DTO.GestorExpedientes;
+using Application.Interfaces.GestorExpedientes.IServices;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 
 
 namespace amh_web_api.Controllers.GestorExpediente
@@ -12,116 +10,141 @@ namespace amh_web_api.Controllers.GestorExpediente
     [ApiController]
     public class CaratulaController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<CaratulaController> _logger;
+        private readonly ICaratulaService _service;
 
-        public CaratulaController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<CaratulaController> logger)
+        public CaratulaController(ICaratulaService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<Caratula>> Caratulas()
-        {
-            var lst = (from tbl in _contexto.Caratula where tbl.Id > 0 select new Caratula() { Id = tbl.Id, Nombre = tbl.Nombre }).ToList();
-
-            return Ok(lst);
-        }
-
-
-        [HttpGet("buscar/{IdCaratula}")]
-        public ActionResult<Caratula> Caratulas(int IdCaratula)
-        {
-            var item = (from tbl in _contexto.Caratula where tbl.Id == IdCaratula select new Caratula() { Id = tbl.Id, Nombre = tbl.Nombre }).FirstOrDefault();
-            if (item == null)
-            {
-                return NotFound(IdCaratula);
-            }
-
-            //_logger.LogWarning("Búsqueda de caratula Id: " + _id + ". Resultados: " + item.Nombre);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(Caratula nuevo)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                _contexto.Caratula.Add(nuevo);
-                _contexto.SaveChanges();
+                var response = await _service.GetAll();
 
-                nuevo.Id = nuevo.Id;
-
-                //_logger.LogWarning("Se insertó una nueva caratula: " + nuevo.Id + ". Nombre: " + nuevo.Nombre);
-                return Ok(nuevo);
-
-            }
-            catch (Exception ex)
-            {
-                //_logger.LogError("Ocurrió un error al insertar la caratula: " + nuevo.Nombre + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-
-
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(Caratula actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                var item = (from h in _contexto.Caratula where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (item == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = item.Nombre;
-                item.Nombre = actualiza.Nombre;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                _contexto.Caratula.Update(item);
-                _contexto.SaveChanges();
-                //_logger.LogWarning("Se actualizó la caratula: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                //_logger.LogError("Ocurrió un error al actualizar la caratula: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{IdCaratula}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int IdCaratula)
+        [HttpGet("IdCaratula")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            var item = (from h in _contexto.Caratula where h.Id == IdCaratula select h).FirstOrDefault();
-
-            if (item == null)
+            try
             {
-                return NotFound(IdCaratula);
-            }
+                var response = await _service.GetById(Id);
 
-            List<Expediente> expedientes = (from tbl in _contexto.Expediente where tbl.IdCaratula == IdCaratula select tbl).ToList();
-            if (expedientes.Count() > 0)
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("No se puede eliminar la caratula porque tiene uno o más expedientes asociados");
+                return BadRequest(new BadRequest { message = ex.Message });
             }
-
-
-            _contexto.Caratula.Remove(item);
-            _contexto.SaveChanges();
-            //_logger.LogWarning("Se eliminó la caratula: " + IdCaratula + ", " + item.Nombre);
-            return Ok(IdCaratula);
         }
 
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(CaratulaRequest request)
+        {
+            try
+            {
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre de la caratula no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la caratula. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(CaratulaRequest request, int id)
+        {
+            try
+            {
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado la caratula exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar la caratula" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre de la caratula no puede estar vacío" }) { StatusCode = 400 };
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
+
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado la caratula exitosamente.", Response = response });
+                }
+
+                if (response != null && response.statusCode >= 400 && response.statusCode < 500)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return new JsonResult(new { Message = "No se encuentra la caratula" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
+        }
     }
 }

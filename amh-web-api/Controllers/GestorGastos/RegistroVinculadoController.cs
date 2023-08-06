@@ -1,9 +1,7 @@
-﻿using AccessData;
-using AutoMapper;
-using Domain.Models.GestorGastos;
-using Microsoft.AspNetCore.Authorization;
+﻿using amh_web_api.DTO;
+using Application.DTO.GestorGastos;
+using Application.Interfaces.GestorGastos.IServices;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 
 namespace amh_web_api.Controllers.GestorGastos
 {
@@ -11,118 +9,141 @@ namespace amh_web_api.Controllers.GestorGastos
     [ApiController]
     public class RegistroVinculadoController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<RegistroVinculadoController> _logger;
+        private readonly IRegistroVinculadoService _service;
 
-        public RegistroVinculadoController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<RegistroVinculadoController> logger)
+        public RegistroVinculadoController(IRegistroVinculadoService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<RegistroVinculado>> RegistrosVinculados()
-        {
-            var lst = (from tbl in _contexto.RegistroVinculado where tbl.Id > 0 select tbl).ToList();
-
-            return Ok(lst);
-        }
-
-
-        [HttpGet("buscar/{Id}")]
-        public ActionResult<RegistroVinculado> RegistroVinculado(int Id)
-        {
-            var item = (from tbl in _contexto.RegistroVinculado where tbl.Id == Id select tbl).FirstOrDefault();
-            if (item == null)
-            {
-                return NotFound(Id);
-            }
-
-            _logger.LogWarning("Búsqueda de Registro Vinculado Id: " + Id + ". Resultados: " + item.Descripcion);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(RegistroVinculado nuevo)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                _contexto.RegistroVinculado.Add(nuevo);
-                _contexto.SaveChanges();
+                var response = await _service.GetAll();
 
-                nuevo.Id = nuevo.Id;
-
-                _logger.LogWarning("Se insertó un nuevo Registro Vinculado: " + nuevo.Id + ". Nombre: " + nuevo.Descripcion);
-                return Ok(nuevo);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Ocurrió un error al insertar el Registro Vinculado: " + nuevo.Descripcion + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-
-
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(RegistroVinculado actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                var item = (from h in _contexto.RegistroVinculado where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (item == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = item.Descripcion;
-                item.Descripcion = actualiza.Descripcion;
-                item.Cuotas = actualiza.Cuotas;
-                item.ValorFinal = actualiza.ValorFinal;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                _contexto.RegistroVinculado.Update(item);
-                _contexto.SaveChanges();
-                _logger.LogWarning("Se actualizó el Registro Vinculado: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Descripcion);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ocurrió un error al actualizar la empresa: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{Id}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int Id)
+        [HttpGet("IdRegistroVinculado")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            var item = (from h in _contexto.RegistroVinculado where h.Id == Id select h).FirstOrDefault();
-
-            if (item == null)
+            try
             {
-                return NotFound(Id);
-            }
+                var response = await _service.GetById(Id);
 
-            List<Registro> lista = (from tbl in _contexto.Registro where tbl.IdSuscripcion == Id select tbl).ToList();
-            if (lista.Count() > 0)
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("No se puede eliminar el Registro Vinculado porque tiene uno o más registros asociados");
+                return BadRequest(new BadRequest { message = ex.Message });
             }
-
-
-            _contexto.RegistroVinculado.Remove(item);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó el Registro Vinculado: " + Id + ", " + item.Descripcion);
-            return Ok(Id);
         }
 
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(RegistroVinculadoRequest request)
+        {
+            try
+            {
+                if (request.Descripcion == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre del registro no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar el registro. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(RegistroVinculadoRequest request, int id)
+        {
+            try
+            {
+                if (request.Descripcion != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado el registro exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar el registro" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre del registro no puede estar vacío" }) { StatusCode = 400 };
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
+
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado el registro exitosamente.", Response = response });
+                }
+
+                if (response != null && response.statusCode >= 400 && response.statusCode < 500)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return new JsonResult(new { Message = "No se encuentra el registro" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
+        }
     }
 }

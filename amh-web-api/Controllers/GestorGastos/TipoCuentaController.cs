@@ -1,9 +1,7 @@
-﻿using AccessData;
-using AutoMapper;
-using Domain.Models.GestorGastos;
-using Microsoft.AspNetCore.Authorization;
+﻿using amh_web_api.DTO;
+using Application.DTO.GestorGastos;
+using Application.Interfaces.GestorGastos.IServices;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 
 namespace amh_web_api.Controllers.GestorGastos
 {
@@ -11,116 +9,141 @@ namespace amh_web_api.Controllers.GestorGastos
     [ApiController]
     public class TipoCuentaController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<TipoCuentaController> _logger;
+        private readonly ITipoCuentaService _service;
 
-        public TipoCuentaController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<TipoCuentaController> logger)
+        public TipoCuentaController(ITipoCuentaService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<TipoCuenta>> TiposTarjeta()
-        {
-            var lst = (from tbl in _contexto.TipoCuenta where tbl.Id > 0 select new TipoCuenta() { Id = tbl.Id, Nombre = tbl.Nombre }).ToList();
-
-            return Ok(lst);
-        }
-
-
-        [HttpGet("buscar/{Id}")]
-        public ActionResult<TipoCuenta> TipoCuenta(int Id)
-        {
-            var item = (from tbl in _contexto.TipoCuenta where tbl.Id == Id select new TipoCuenta() { Id = tbl.Id, Nombre = tbl.Nombre }).FirstOrDefault();
-            if (item == null)
-            {
-                return NotFound(Id);
-            }
-
-            _logger.LogWarning("Búsqueda de tipo de cuenta Id: " + Id + ". Resultados: " + item.Nombre);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(TipoCuenta nuevo)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                _contexto.TipoCuenta.Add(nuevo);
-                _contexto.SaveChanges();
+                var response = await _service.GetAll();
 
-                nuevo.Id = nuevo.Id;
-
-                _logger.LogWarning("Se insertó un nuevo tipo de cuenta: " + nuevo.Id + ". Nombre: " + nuevo.Nombre);
-                return Ok(nuevo);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Ocurrió un error al insertar el tipo de cuenta: " + nuevo.Nombre + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-
-
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(TipoCuenta actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                var item = (from h in _contexto.TipoCuenta where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (item == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = item.Nombre;
-                item.Nombre = actualiza.Nombre;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                _contexto.TipoCuenta.Update(item);
-                _contexto.SaveChanges();
-                _logger.LogWarning("Se actualizó el tipo de cuenta: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Nombre);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ocurrió un error al actualizar el tipo de cuenta: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{Id}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int Id)
+        [HttpGet("IdTipoCuenta")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            var item = (from h in _contexto.TipoCuenta where h.Id == Id select h).FirstOrDefault();
-
-            if (item == null)
+            try
             {
-                return NotFound(Id);
-            }
+                var response = await _service.GetById(Id);
 
-            List<Cuenta> lista = (from tbl in _contexto.Cuenta where tbl.IdTipoCuenta == Id select tbl).ToList();
-            if (lista.Count() > 0)
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("No se puede eliminar el tipo de cuenta porque tiene una o más cuentas asociadas");
+                return BadRequest(new BadRequest { message = ex.Message });
             }
-
-
-            _contexto.TipoCuenta.Remove(item);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó el tipo de cuenta: " + Id + ", " + item.Nombre);
-            return Ok(Id);
         }
 
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(TipoCuentaRequest request)
+        {
+            try
+            {
+                if (request.Nombre == "")
+                {
+                    return BadRequest(new BadRequest { message = "El nombre del tipo de cuenta no puede estar vacío" });
+                }
+
+                var response = await _service.Insert(request);
+
+                if (response.response == null)
+                {
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar el tipo de cuenta. Revise los valores ingresados" });
+                }
+
+                return Created("", response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+
+        }
+
+        [HttpPut]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(TipoCuentaRequest request, int id)
+        {
+            try
+            {
+                if (request.Nombre != "")
+                {
+                    var response = await _service.Update(request, id);
+                    if (response != null && response.response != null)
+                    {
+                        return new JsonResult(new { Message = "Se ha actualizado el tipo de cuenta exitosamente.", Response = response }) { StatusCode = 200 };
+                    }
+                    else
+                    {
+                        return new JsonResult(new { Message = "No se pudo actualizar el tipo de cuenta" }) { StatusCode = 400 };
+                    }
+                }
+                else
+                {
+                    return new JsonResult(new { Message = "El nombre del tipo de cuenta no puede estar vacío" }) { StatusCode = 400 };
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            try
+            {
+                var response = await _service.Delete(Id);
+
+                if (response != null && response.response != null)
+                {
+                    return Ok(new { Message = "Se ha eliminado el tipo de cuenta exitosamente.", Response = response });
+                }
+
+                if (response != null && response.statusCode >= 400 && response.statusCode < 500)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
+                return new JsonResult(new { Message = "No se encuentra el tipo de cuenta" }) { StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Message = "Se ha producido un error interno en el servidor." }) { StatusCode = 500 };
+            }
+        }
     }
 }
