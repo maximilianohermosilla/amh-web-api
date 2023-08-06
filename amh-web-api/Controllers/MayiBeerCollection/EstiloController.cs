@@ -133,6 +133,11 @@ namespace amh_web_api.Controllers.MayiBeerCollection
                     return Ok(new { Message = "Se ha eliminado el estilo exitosamente.", Response = response });
                 }
 
+                if (response != null && response.statusCode >= 400 && response.statusCode < 500)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+
                 return new JsonResult(new { Message = "No se encuentra el estilo" }) { StatusCode = 404 };
             }
             catch (Exception ex)

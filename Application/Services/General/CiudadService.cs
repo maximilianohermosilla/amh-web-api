@@ -3,8 +3,10 @@ using Application.DTO.General;
 using Application.Interfaces.General.ICommands;
 using Application.Interfaces.General.IQueries;
 using Application.Interfaces.General.IServices;
+using Application.Interfaces.MayiBeerCollection.IQueries;
 using AutoMapper;
 using Domain.Models;
+using Domain.Models.MayiBeerCollection;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services.General
@@ -12,18 +14,20 @@ namespace Application.Services.General
     public class CiudadService: ICiudadService
     {
         private readonly ICiudadQuery _ciudadQuery;
+        private readonly ICervezaQuery _cervezaQuery;
         private readonly IPaisQuery _paisQuery;
         private readonly ICiudadCommand _ciudadCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<CiudadService> _logger;
 
-        public CiudadService(ICiudadQuery ciudadQuery, ICiudadCommand ciudadCommand, IMapper mapper, IPaisQuery paisQuery, ILogger<CiudadService> logger)
+        public CiudadService(ICiudadQuery ciudadQuery, ICiudadCommand ciudadCommand, IMapper mapper, IPaisQuery paisQuery, ILogger<CiudadService> logger, ICervezaQuery cervezaQuery)
         {
             _ciudadQuery = ciudadQuery;
             _ciudadCommand = ciudadCommand;
             _mapper = mapper;
             _paisQuery = paisQuery;
             _logger = logger;
+            _cervezaQuery = cervezaQuery;
         }
 
         public async Task<ResponseModel> Delete(int id)
@@ -42,11 +46,15 @@ namespace Application.Services.General
                     return response;
                 }
 
-                //List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdCiudad == CiudadId select tbl).ToList();
-                //if (_cervezas.Count() > 0)
-                //{
-                //    return BadRequest("No se puede eliminar la ciudad porque tiene una o más cervezas asociadas");
-                //}
+                List<Cerveza> cervezas = await _cervezaQuery.GetAll(0, 0, id, 0, false);
+
+                if (cervezas.Any())
+                {
+                    response.statusCode = 409;
+                    response.message = "No se puede eliminar la ciudad porque posee al menos una cerveza asignada";
+                    response.response = null;
+                    return response;
+                }
 
                 await _ciudadCommand.Delete(ciudad);
                 cuidadResponse = _mapper.Map<CiudadResponse>(ciudad);

@@ -3,8 +3,10 @@ using Application.DTO.General;
 using Application.Interfaces.General.ICommands;
 using Application.Interfaces.General.IQueries;
 using Application.Interfaces.General.IServices;
+using Application.Interfaces.MayiBeerCollection.IQueries;
 using AutoMapper;
 using Domain.Models;
+using Domain.Models.MayiBeerCollection;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services.General
@@ -12,16 +14,18 @@ namespace Application.Services.General
     public class PaisService: IPaisService
     {
         private readonly IPaisQuery _paisQuery;
+        private readonly ICervezaQuery _cervezaQuery;
         private readonly IPaisCommand _paisCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<PaisService> _logger;
 
-        public PaisService(IPaisQuery paisQuery, IPaisCommand paisCommand, IMapper mapper, ILogger<PaisService> logger)
+        public PaisService(IPaisQuery paisQuery, IPaisCommand paisCommand, IMapper mapper, ILogger<PaisService> logger, ICervezaQuery cervezaQuery)
         {
             _paisQuery = paisQuery;
             _paisCommand = paisCommand;
             _mapper = mapper;
             _logger = logger;
+            _cervezaQuery = cervezaQuery;
         }
 
         public async Task<ResponseModel> Delete(int id)
@@ -40,11 +44,15 @@ namespace Application.Services.General
                     return response;
                 }
 
-                //List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdCiudad == CiudadId select tbl).ToList();
-                //if (_cervezas.Count() > 0)
-                //{
-                //    return BadRequest("No se puede eliminar la ciudad porque tiene una o más cervezas asociadas");
-                //}
+                List<Cerveza> cervezas = await _cervezaQuery.GetAll(0, 0, 0, id, false);
+
+                if (cervezas.Any())
+                {
+                    response.statusCode = 409;
+                    response.message = "No se puede eliminar el país porque posee al menos una cerveza asignada";
+                    response.response = null;
+                    return response;
+                }
 
                 await _paisCommand.Delete(pais);
                 paisResponse = _mapper.Map<PaisResponse>(pais);

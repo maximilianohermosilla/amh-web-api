@@ -2,6 +2,8 @@
 using amh_web_api.DTO;
 using Application.DTO.MayiBeerCollection;
 using Application.Interfaces.MayiBeerCollection.IServices;
+using Domain.Models.MayiBeerCollection;
+using Domain.Models;
 
 namespace amh_web_api.Controllers.MayiBeerCollection
 {
@@ -17,19 +19,15 @@ namespace amh_web_api.Controllers.MayiBeerCollection
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(bool fullresponse = false)
+        public async Task<IActionResult> GetAll(int? IdMarca = 0, int? IdEstilo = 0, int? IdCiudad = 0, int? IdPais = 0, bool fullresponse = false)
         {
             try
             {
-                var response = await _service.GetAll(fullresponse);
+                var response = await _service.GetAll(fullresponse, IdMarca, IdEstilo, IdCiudad, IdPais);
 
-                if (response.statusCode == 400)
+                if (response != null && response.statusCode >= 400 && response.statusCode < 500)
                 {
                     return BadRequest(new BadRequest { message = response.message });
-                }
-                if (response.statusCode == 404)
-                {
-                    return NotFound(new BadRequest { message = response.message });
                 }
 
                 return Ok(response.response);

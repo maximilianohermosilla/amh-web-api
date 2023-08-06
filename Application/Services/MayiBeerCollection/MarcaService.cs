@@ -12,16 +12,18 @@ namespace Application.Services.MayiBeerCollection
     public class MarcaService : IMarcaService
     {
         private readonly IMarcaQuery _marcaQuery;
+        private readonly ICervezaQuery _cervezaQuery;
         private readonly IMarcaCommand _marcaCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<MarcaService> _logger;
 
-        public MarcaService(IMarcaQuery marcaQuery, IMarcaCommand marcaCommand, IMapper mapper, ILogger<MarcaService> logger)
+        public MarcaService(IMarcaQuery marcaQuery, IMarcaCommand marcaCommand, IMapper mapper, ILogger<MarcaService> logger, ICervezaQuery cervezaQuery)
         {
             _marcaQuery = marcaQuery;
             _marcaCommand = marcaCommand;
             _mapper = mapper;
             _logger = logger;
+            _cervezaQuery = cervezaQuery;
         }
 
         public async Task<ResponseModel> Delete(int id)
@@ -40,11 +42,15 @@ namespace Application.Services.MayiBeerCollection
                     return response;
                 }
 
-                //List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdCiudad == CiudadId select tbl).ToList();
-                //if (_cervezas.Count() > 0)
-                //{
-                //    return BadRequest("No se puede eliminar la ciudad porque tiene una o más cervezas asociadas");
-                //}
+                List<Cerveza> cervezas = await _cervezaQuery.GetAll(id, 0, 0, 0, false);
+
+                if (cervezas.Any())
+                {
+                    response.statusCode = 409;
+                    response.message = "No se puede eliminar la marca porque posee al menos una cerveza asignada";
+                    response.response = null;
+                    return response;
+                }
 
                 await _marcaCommand.Delete(marca);
                 marcaResponse = _mapper.Map<MarcaResponse>(marca);

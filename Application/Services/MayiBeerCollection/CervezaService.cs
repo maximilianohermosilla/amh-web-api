@@ -58,13 +58,13 @@ namespace Application.Services.MayiBeerCollection
             return response;
         }
 
-        public async Task<ResponseModel> GetAll(bool fullresponse)
+        public async Task<ResponseModel> GetAll(bool fullresponse, int? IdMarca = 0, int? IdEstilo = 0, int? IdCiudad = 0, int? IdPais = 0)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<Cerveza> lista = await _cervezaQuery.GetAll(fullresponse);
+                List<Cerveza> lista = await _cervezaQuery.GetAll(IdMarca, IdEstilo, IdCiudad, IdPais, fullresponse);
                 List<CervezaResponse> listaDTO = _mapper.Map<List<CervezaResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";

@@ -4,6 +4,7 @@ using Application.Interfaces.MayiBeerCollection.ICommands;
 using Application.Interfaces.MayiBeerCollection.IQueries;
 using Application.Interfaces.MayiBeerCollection.IServices;
 using AutoMapper;
+using Domain.Models;
 using Domain.Models.MayiBeerCollection;
 using Microsoft.Extensions.Logging;
 
@@ -12,16 +13,18 @@ namespace Application.Services.MayiBeerCollection
     public class EstiloService : IEstiloService
     {
         private readonly IEstiloQuery _estiloQuery;
+        private readonly ICervezaQuery _cervezaQuery;
         private readonly IEstiloCommand _estiloCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<EstiloService> _logger;
 
-        public EstiloService(IEstiloQuery estiloQuery, IEstiloCommand estiloCommand, IMapper mapper, ILogger<EstiloService> logger)
+        public EstiloService(IEstiloQuery estiloQuery, IEstiloCommand estiloCommand, IMapper mapper, ILogger<EstiloService> logger, ICervezaQuery cervezaQuery)
         {
             _estiloQuery = estiloQuery;
             _estiloCommand = estiloCommand;
             _mapper = mapper;
             _logger = logger;
+            _cervezaQuery = cervezaQuery;
         }
 
         public async Task<ResponseModel> Delete(int id)
@@ -40,11 +43,15 @@ namespace Application.Services.MayiBeerCollection
                     return response;
                 }
 
-                //List<Cerveza> _cervezas = (from tbl in _contexto.Cerveza where tbl.IdCiudad == CiudadId select tbl).ToList();
-                //if (_cervezas.Count() > 0)
-                //{
-                //    return BadRequest("No se puede eliminar la ciudad porque tiene una o más cervezas asociadas");
-                //}
+                List<Cerveza> cervezas = await _cervezaQuery.GetAll(0, id, 0, 0, false);
+                
+                if (cervezas.Any())
+                {
+                    response.statusCode = 409;
+                    response.message = "No se puede eliminar el estilo porque posee al menos una cerveza asignada";
+                    response.response = null;
+                    return response;
+                }
 
                 await _estiloCommand.Delete(estilo);
                 estiloResponse = _mapper.Map<EstiloResponse>(estilo);

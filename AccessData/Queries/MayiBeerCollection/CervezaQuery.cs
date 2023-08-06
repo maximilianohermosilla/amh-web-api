@@ -14,16 +14,23 @@ namespace AccessData.Query.MayiBeerCollection
             _context = context;
         }
 
-        public async Task<List<Cerveza>> GetAll(bool fullresponse)
+        public async Task<List<Cerveza>> GetAll(int? IdMarca, int? IdEstilo, int? IdCiudad, int? IdPais, bool fullresponse)
         {
             if(fullresponse)
             {
-                var lista = await _context.Cerveza.Include(c => c.Marca).Include(c => c.Estilo).Include(c => c.Ciudad).Include(c => c.Ciudad.Pais).ToListAsync();
+                var lista = await _context.Cerveza.Where(c => (IdMarca == 0 || c.IdMarca == IdMarca)
+                                                          && (IdEstilo == 0 || c.IdEstilo == IdEstilo)
+                                                          && (IdCiudad == 0 || c.IdCiudad == IdCiudad)
+                                                          && (IdPais == 0 || c.Ciudad.IdPais == IdPais))
+                    .Include(c => c.Marca).Include(c => c.Estilo).Include(c => c.Ciudad).Include(c => c.Ciudad.Pais).ToListAsync();
                 return lista;
             }
             else
             {
-                var lista = await _context.Cerveza.ToListAsync();
+                var lista = await _context.Cerveza.Where(c => (IdMarca == 0 || c.IdMarca == IdMarca)
+                                                          && (IdEstilo == 0 || c.IdEstilo == IdEstilo)
+                                                          && (IdCiudad == 0 || c.IdCiudad == IdCiudad)
+                                                          && (IdPais == 0 || c.Ciudad.IdPais == IdPais)).ToListAsync();
                 return lista;
             }
         }
@@ -41,18 +48,6 @@ namespace AccessData.Query.MayiBeerCollection
                 return element;
             }
             
-        }
-
-        public async Task<List<Cerveza>> GetAllFilter(BusquedaDTO busqueda, bool fullresponse)
-        {
-            var lista = await (from tbl in _context.Cerveza where
-                                (tbl.IdMarca == busqueda.IdMarca || busqueda.IdMarca == 0) &&
-                                (tbl.IdEstilo == busqueda.IdEstilo || busqueda.IdEstilo == 0) &&
-                                (tbl.IdCiudad == busqueda.IdCiudad || busqueda.IdCiudad == 0 && busqueda.IdPais == 0 ||
-                                busqueda.IdCiudad == 0 && busqueda.IdPais > 0 && 
-                                (from tblCiudad in _context.Ciudad where tblCiudad.IdPais == busqueda.IdPais select tblCiudad.Id)
-                                .Contains((int)tbl.IdCiudad))select tbl).ToListAsync();
-            return lista;
         }
     }
 }
