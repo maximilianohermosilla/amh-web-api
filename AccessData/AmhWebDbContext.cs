@@ -46,7 +46,8 @@ public partial class AmhWebDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=localhost; Database=AmhWebAPI; Trusted_Connection=True; TrustServerCertificate=True");
+        //optionsBuilder.UseSqlServer("Server=localhost; Database=AmhWebAPI; Trusted_Connection=True; TrustServerCertificate=True");
+        optionsBuilder.UseSqlServer("Server=SQL5097.site4now.net;Database=db_a934ba_mayibeercollection;User Id=db_a934ba_mayibeercollection_admin;Password=Caslacapo1908**");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,7 +1,5 @@
 ﻿using amh_web_api.DTO;
 using Application.DTO.General;
-using Domain.Models.GestorExpedientes;
-using Domain.Models.MayiBeerCollection;
 
 namespace Application.Interfaces.General.IServices
 {

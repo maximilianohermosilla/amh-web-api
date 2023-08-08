@@ -39,7 +39,7 @@ namespace AccessData.Query.MayiBeerCollection
         {
             if (fullresponse)
             {
-                var element = await _context.Cerveza.Where(m => m.Id == id).Include(c => c.Estilo).Include(c => c.Ciudad).Include(c => c.Ciudad.Pais).FirstOrDefaultAsync();
+                var element = await _context.Cerveza.Where(m => m.Id == id).Include(c => c.Estilo).Include(c => c.Ciudad).Include(c => c.Ciudad.Pais).Include(c => c.Marca).FirstOrDefaultAsync();
                 return element;
             }
             else

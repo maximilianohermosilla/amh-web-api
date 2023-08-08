@@ -114,13 +114,18 @@ builder.Services.AddAutoMapper(config =>
 
 }, typeof(Program));
 
+//ADD CORS
+builder.Services.AddCors(options => options.AddPolicy("AllowWebApp",
+    builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //CONNECTION STRING
-var connectionString = builder.Configuration["ConnectionString"];
-builder.Services.AddDbContext<AmhWebDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AmhWebDbContext>(x => x.UseSqlServer("Data Source=SQL5097.site4now.net;Initial Catalog=db_a934ba_mayibeercollection;User Id=db_a934ba_mayibeercollection_admin;Password=Caslacapo1908**"));
+//var connectionString = builder.Configuration["ConnectionString"];
+//builder.Services.AddDbContext<AmhWebDbContext>(options => options.UseSqlServer(connectionString));
 
 
 //INTERFACES
@@ -142,6 +147,9 @@ builder.Services.AddTransient<IPaisCommand, PaisCommand>();
 builder.Services.AddTransient<ISistemaCommand, SistemaCommand>();
 builder.Services.AddTransient<IUsuarioCommand, UsuarioCommand>();
 builder.Services.AddTransient<IUsuarioSistemaCommand, UsuarioSistemaCommand>();
+
+builder.Services.AddHttpClient<IServerImagesApiService, ServerImagesApiService>()
+       .Services.AddScoped<IServerImagesApiService, ServerImagesApiService>();
 #endregion
 
 #region GestorExpedientes
