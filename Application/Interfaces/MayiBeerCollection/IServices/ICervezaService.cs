@@ -10,5 +10,6 @@ namespace Application.Interfaces.MayiBeerCollection.IServices
         Task<ResponseModel> Insert(CervezaRequest mercaderia);
         Task<ResponseModel> Update(CervezaRequest mercaderia, int id);
         Task<ResponseModel> Delete(int id);
+        Task<ResponseModel> GetCountReport();
     }
 }

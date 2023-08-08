@@ -4,6 +4,7 @@ using Application.Interfaces.MayiBeerCollection.ICommands;
 using Application.Interfaces.MayiBeerCollection.IQueries;
 using Application.Interfaces.MayiBeerCollection.IServices;
 using AutoMapper;
+using Domain.Models;
 using Domain.Models.MayiBeerCollection;
 using Microsoft.Extensions.Logging;
 
@@ -103,6 +104,27 @@ namespace Application.Services.MayiBeerCollection
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
                 response.response = CervezaResponse;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+            }
+
+            return response;
+        }
+
+        public async Task<ResponseModel> GetCountReport()
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                List<ReporteResponse> lista = await _cervezaQuery.GetCountReport();
+
+                response.message = "Consulta realizada correctamente";
+                response.statusCode = 200;
+                response.response = lista;
             }
             catch (Exception ex)
             {

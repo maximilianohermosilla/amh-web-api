@@ -1,4 +1,5 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.MayiBeerCollection;
 using Application.Interfaces.MayiBeerCollection.IQueries;
 using Domain.Models.MayiBeerCollection;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,22 @@ namespace AccessData.Query.MayiBeerCollection
                 return element;
             }
             
+        }
+
+        public async Task<List<ReporteResponse>> GetCountReport()
+        {
+            var lista = await (from cerveza in _context.Cerveza
+                        join ciudad in _context.Ciudad on cerveza.IdCiudad equals ciudad.Id
+                        select new ReporteResponse
+                        {
+                            Id= cerveza.Id,
+                            IdMarca = cerveza.IdMarca,
+                            IdEstilo = cerveza.IdEstilo,
+                            IdCiudad = cerveza.IdCiudad,
+                            IdPais = ciudad.IdPais
+                        }).ToListAsync();
+
+            return lista;
         }
     }
 }
