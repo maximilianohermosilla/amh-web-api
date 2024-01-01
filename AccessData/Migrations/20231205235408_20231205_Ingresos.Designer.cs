@@ -4,6 +4,7 @@ using AccessData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccessData.Migrations
 {
     [DbContext(typeof(AmhWebDbContext))]
-    partial class AmhWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205235408_20231205_Ingresos")]
+    partial class _20231205_Ingresos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -260,40 +263,6 @@ namespace AccessData.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Empresa");
-                });
-
-            modelBuilder.Entity("Domain.Models.GestorGastos.Ingreso", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IdUsuario")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Periodo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Ingreso");
                 });
 
             modelBuilder.Entity("Domain.Models.GestorGastos.Registro", b =>
@@ -831,17 +800,6 @@ namespace AccessData.Migrations
                     b.Navigation("Tarjeta");
 
                     b.Navigation("TipoCuenta");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("Domain.Models.GestorGastos.Ingreso", b =>
-                {
-                    b.HasOne("Domain.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Usuario");
                 });

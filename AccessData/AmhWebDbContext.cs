@@ -29,6 +29,7 @@ public partial class AmhWebDbContext : DbContext
     public virtual DbSet<TipoTarjeta> TipoTarjeta { get; set; }
     public virtual DbSet<TipoCuenta> TipoCuenta { get; set; }
     public virtual DbSet<Suscripcion> Suscripcion { get; set; }
+    public virtual DbSet<Ingreso> Ingreso { get; set; }
 
     //MAYIBEERCOLLECTION
     public virtual DbSet<Cerveza> Cerveza { get; set; }
@@ -43,12 +44,6 @@ public partial class AmhWebDbContext : DbContext
     public virtual DbSet<Sistema> Sistema { get; set; }
     public virtual DbSet<Usuario> Usuario { get; set; }
     public virtual DbSet<UsuarioSistema> UsuarioSistema { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        //optionsBuilder.UseSqlServer("Server=localhost; Database=AmhWebAPI; Trusted_Connection=True; TrustServerCertificate=True");
-        optionsBuilder.UseSqlServer("Server=SQL5097.site4now.net;Database=db_a934ba_mayibeercollection;User Id=db_a934ba_mayibeercollection_admin;Password=Caslacapo1908**");
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

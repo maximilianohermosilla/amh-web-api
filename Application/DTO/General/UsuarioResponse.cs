@@ -11,5 +11,6 @@
         public bool? Habilitado { get; set; }
         public int? IdPerfil { get; set; }
         public string? PerfilDescripcion { get; set; }
+        public List<UsuarioSistemaResponse>? UsuariosSistema { get; set; }
     }
 }

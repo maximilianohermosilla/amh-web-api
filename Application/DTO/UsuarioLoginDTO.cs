@@ -4,5 +4,7 @@
     {
         public string Login { get; set; }
         public string Password { get; set; }
+        public string? PasswordNew { get; set; }
+        public int IdSistema { get; set; }
     }
 }

@@ -12,7 +12,11 @@ public partial class Suscripcion
 
     public decimal ValorActual { get; set; }
 
+    public int? IdCategoriaGasto { get; set; }
+
     public int? IdUsuario { get; set; }
+
+    public virtual CategoriaGasto? CategoriaGasto { get; set; }
 
     public virtual Usuario? Usuario { get; set; }
 

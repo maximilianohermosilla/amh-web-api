@@ -8,9 +8,10 @@ namespace Application.Interfaces.General.IServices
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
-        Task<ResponseModel> GetByCredentials(string userName, string password);
+        Task<ResponseModel> GetByCredentials(UsuarioLoginDTO userLogin, string secretKey);
         Task<ResponseModel> Insert(UsuarioRequest entity);
-        Task<ResponseModel> Update(UsuarioRequest entity, int id);
+        Task<ResponseModel> Update(UsuarioRequest entity);
+        Task<ResponseModel> UpdatePassword(UsuarioLoginDTO entity);
         Task<ResponseModel> Delete(int id);
     }
 }

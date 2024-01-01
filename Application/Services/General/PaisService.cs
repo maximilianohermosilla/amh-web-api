@@ -155,13 +155,13 @@ namespace Application.Services.General
         }
 
 
-        public async Task<ResponseModel> Update(PaisRequest entity, int id)
+        public async Task<ResponseModel> Update(PaisRequest entity)
         {
             ResponseModel response = new ResponseModel();
             PaisResponse paisResponse = new PaisResponse();
             try
             {
-                var pais = await _paisQuery.GetById(id);
+                var pais = await _paisQuery.GetById(entity.Id);
 
                 if (pais == null)
                 {

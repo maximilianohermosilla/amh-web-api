@@ -147,13 +147,13 @@ namespace Application.Services.General
         }
     
 
-        public async Task<ResponseModel> Update(CiudadRequest entity, int id)
+        public async Task<ResponseModel> Update(CiudadRequest entity)
         {
             ResponseModel response = new ResponseModel();
             CiudadResponse cuidadResponse = new CiudadResponse();
             try
             {
-                var ciudad = await _ciudadQuery.GetById(id);
+                var ciudad = await _ciudadQuery.GetById(entity.Id);
                 var pais = await _paisQuery.GetById(entity.IdPais);
 
                 if (ciudad == null || pais == null)

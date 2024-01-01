@@ -19,6 +19,12 @@ namespace AccessData.Query.General
             return lista;
         }
 
+        public async Task<UsuarioSistema> GetById(int idUsuarioSistema)
+        {
+            var element = await _context.UsuarioSistema.Where(m => m.Id == idUsuarioSistema).FirstOrDefaultAsync();
+            return element;
+        }
+
         public async Task<List<UsuarioSistema>> GetBySistema(int idSistema)
         {
             var lista = await _context.UsuarioSistema.Where(m => m.IdSistema == idSistema).ToListAsync();

@@ -8,7 +8,7 @@ namespace Application.Interfaces.General.IServices
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(PaisRequest entity);
-        Task<ResponseModel> Update(PaisRequest entity, int id);
+        Task<ResponseModel> Update(PaisRequest entity);
         Task<ResponseModel> Delete(int id);
     }
 }

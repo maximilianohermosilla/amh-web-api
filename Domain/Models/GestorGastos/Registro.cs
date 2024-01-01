@@ -12,6 +12,8 @@ public partial class Registro
 
     public int IdCuenta { get; set; }
 
+    public int? IdCategoriaGasto { get; set; }
+
     public int? IdRegistroVinculado { get; set; }
 
     public int? NumeroCuota { get; set; }
@@ -28,6 +30,8 @@ public partial class Registro
 
     public DateTime? FechaPago { get; set; }
 
+    public string? Periodo { get; set; }
+
     public virtual Cuenta Cuenta { get; set; } = null!;
 
     public virtual Empresa? Empresa { get; set; }
@@ -35,6 +39,8 @@ public partial class Registro
     public virtual RegistroVinculado? RegistroVinculado { get; set; }
 
     public virtual Suscripcion? Suscripcion { get; set; }
+
+    public virtual CategoriaGasto? CategoriaGasto { get; set; }
 
     public virtual Usuario? Usuario { get; set; }
 }

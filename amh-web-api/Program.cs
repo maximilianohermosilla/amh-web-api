@@ -31,6 +31,7 @@ using Application.Services.MayiBeerCollection;
 using AccessData.Commands.MayiBeerCollection;
 using AccessData.Query.MayiBeerCollection;
 using Application.DTO.MayiBeerCollection;
+using Application.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -123,7 +124,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //CONNECTION STRING
-builder.Services.AddDbContext<AmhWebDbContext>(x => x.UseSqlServer("Data Source=SQL5097.site4now.net;Initial Catalog=db_a934ba_mayibeercollection;User Id=db_a934ba_mayibeercollection_admin;Password=Caslacapo1908**"));
+builder.Services.AddDbContext<AmhWebDbContext>(
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<AmhWebDbContext>(x => x.UseSqlServer("Data Source=SQL5097.site4now.net;Initial Catalog=db_a934ba_mayibeercollection;User Id=db_a934ba_mayibeercollection_admin;Password=Caslacapo1908**"));
 //var connectionString = builder.Configuration["ConnectionString"];
 //builder.Services.AddDbContext<AmhWebDbContext>(options => options.UseSqlServer(connectionString));
 
@@ -135,6 +138,7 @@ builder.Services.AddTransient<IPaisService, PaisService>();
 builder.Services.AddTransient<ISistemaService, SistemaService>();
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IUsuarioSistemaService, UsuarioSistemaService>();
+builder.Services.AddTransient<ITokenServices, TokenServices>();
 
 builder.Services.AddTransient<ICiudadQuery, CiudadQuery>();
 builder.Services.AddTransient<IPaisQuery, PaisQuery>();

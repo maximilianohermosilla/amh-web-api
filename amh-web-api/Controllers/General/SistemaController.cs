@@ -1,9 +1,6 @@
-﻿using AccessData;
-using AutoMapper;
-using Domain.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using amh_web_api.DTO;
+using Application.Interfaces.General.IServices;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 
 namespace amh_web_api.Controllers.General
 {
@@ -11,116 +8,59 @@ namespace amh_web_api.Controllers.General
     [ApiController]
     public class SistemaController : ControllerBase
     {
-        private AmhWebDbContext _contexto;
-        private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
-        private readonly ILogger<SistemaController> _logger;
+        private readonly ISistemaService _service;
 
-        public SistemaController(AmhWebDbContext context, IConfiguration configuration, IMapper mapper, ILogger<SistemaController> logger)
+        public SistemaController(ISistemaService service)
         {
-            _contexto = context;
-            _configuration = configuration;
-            _mapper = mapper;
-            _logger = logger;
+            _service = service;
         }
 
-        [HttpGet("listar/")]
-        public ActionResult<IEnumerable<Sistema>> Sistemas()
-        {
-            var lst = (from tbl in _contexto.Sistema where tbl.Id > 0 select new Sistema() { Id = tbl.Id, Descripcion = tbl.Descripcion }).ToList();
-
-            return Ok(lst);
-        }
-
-
-        [HttpGet("buscar/{IdSistema}")]
-        public ActionResult<Sistema> Sistemas(int IdSistema)
-        {
-            var item = (from tbl in _contexto.Sistema where tbl.Id == IdSistema select new Sistema() { Id = tbl.Id, Descripcion = tbl.Descripcion }).FirstOrDefault();
-            if (item == null)
-            {
-                return NotFound(IdSistema);
-            }
-
-            _logger.LogWarning("Búsqueda de sistema Id: " + IdSistema + ". Resultados: " + item.Descripcion);
-            return Ok(item);
-        }
-
-        [HttpPost("nuevo")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult nuevo(Sistema nuevo)
+        [HttpGet()]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                _contexto.Sistema.Add(nuevo);
-                _contexto.SaveChanges();
+                var response = await _service.GetAll();
 
-                nuevo.Id = nuevo.Id;
-
-                _logger.LogWarning("Se insertó un nuevo sistema: " + nuevo.Id + ". Nombre: " + nuevo.Descripcion);
-                return Ok(nuevo);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Ocurrió un error al insertar el sistema: " + nuevo.Descripcion + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
-            }
-
-
-        }
-
-        [HttpPut("actualizar")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult actualizar(Sistema actualiza)
-        {
-            string oldName = "";
-            try
-            {
-                var item = (from h in _contexto.Sistema where h.Id == actualiza.Id select h).FirstOrDefault();
-
-                if (item == null)
+                if (response.statusCode == 400)
                 {
-                    return NotFound(actualiza);
+                    return BadRequest(new BadRequest { message = response.message });
                 }
-                oldName = item.Descripcion;
-                item.Descripcion = actualiza.Descripcion;
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
 
-                _contexto.Sistema.Update(item);
-                _contexto.SaveChanges();
-                _logger.LogWarning("Se actualizó el sistema: " + actualiza.Id + ". Nombre anterior: " + oldName + ". Nombre actual: " + actualiza.Descripcion);
-                return Ok(actualiza);
+                return Ok(response.response);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ocurrió un error al actualizar el sistema: " + oldName + ". Detalle: " + ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new BadRequest { message = ex.Message });
             }
         }
 
-        [HttpDelete("eliminar/{IdSistema}")]
-        [Authorize(Roles = "Administrador")]
-        public ActionResult eliminar(int IdSistema)
+        [HttpGet("IdSistema")]
+        public async Task<IActionResult> GetById(int Id)
         {
-            var item = (from h in _contexto.Sistema where h.Id == IdSistema select h).FirstOrDefault();
-
-            if (item == null)
+            try
             {
-                return NotFound(IdSistema);
-            }
+                var response = await _service.GetById(Id);
 
-            List<UsuarioSistema> usuarios = (from tbl in _contexto.UsuarioSistema where tbl.IdSistema == IdSistema select tbl).ToList();
-            if (usuarios.Count() > 0)
+                if (response.statusCode == 400)
+                {
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
+                }
+
+                return Ok(response.response);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("No se puede eliminar el sistema porque tiene uno o más usuarios asociados");
+                return BadRequest(new BadRequest { message = ex.Message });
             }
-
-
-            _contexto.Sistema.Remove(item);
-            _contexto.SaveChanges();
-            _logger.LogWarning("Se eliminó el sistema: " + IdSistema + ", " + item.Descripcion);
-            return Ok(IdSistema);
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using amh_web_api.DTO;
+using Domain.Models;
 
 namespace Application.Interfaces.General.IQueries
 {
@@ -6,6 +7,6 @@ namespace Application.Interfaces.General.IQueries
     {
         Task<List<Usuario>> GetAll();
         Task<Usuario> GetById(int? id);
-        Task<Usuario> GetByCredentials(string userName, string password);
+        Task<Usuario> GetByCredentials(UsuarioLoginDTO request);
     }
 }
