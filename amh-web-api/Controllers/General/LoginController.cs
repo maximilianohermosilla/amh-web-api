@@ -2,11 +2,6 @@
 using AccessData;
 using amh_web_api.DTO;
 using Application.Interfaces.General.IServices;
-using Application.DTO.General;
-using Domain.Models;
-using Application.Helpers;
-using Application.UseCases;
-using System.Security.Principal;
 
 namespace amh_web_api.Controllers.General
 {

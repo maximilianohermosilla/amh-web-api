@@ -39,6 +39,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(config =>
 {
     #region GENERAL
+    config.CreateMap<Cancion, CancionResponse>();
+    config.CreateMap<CancionResponse, Cancion>();
+
+    config.CreateMap<Cancion, CancionRequest>();
+    config.CreateMap<CancionRequest, Cancion>();
+
     config.CreateMap<Ciudad, CiudadResponse>();
     config.CreateMap<CiudadResponse, Ciudad>();
 
@@ -133,6 +139,7 @@ builder.Services.AddDbContext<AmhWebDbContext>(
 
 //INTERFACES
 #region General
+builder.Services.AddTransient<ICancionService, CancionService>();
 builder.Services.AddTransient<ICiudadService, CiudadService>();
 builder.Services.AddTransient<IPaisService, PaisService>();
 builder.Services.AddTransient<ISistemaService, SistemaService>();
@@ -140,12 +147,14 @@ builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IUsuarioSistemaService, UsuarioSistemaService>();
 builder.Services.AddTransient<ITokenServices, TokenServices>();
 
+builder.Services.AddTransient<ICancionQuery, CancionQuery>();
 builder.Services.AddTransient<ICiudadQuery, CiudadQuery>();
 builder.Services.AddTransient<IPaisQuery, PaisQuery>();
 builder.Services.AddTransient<ISistemaQuery, SistemaQuery>();
 builder.Services.AddTransient<IUsuarioQuery, UsuarioQuery>();
 builder.Services.AddTransient<IUsuarioSistemaQuery, UsuarioSistemaQuery>();
 
+builder.Services.AddTransient<ICancionCommand, CancionCommand>();
 builder.Services.AddTransient<ICiudadCommand, CiudadCommand>();
 builder.Services.AddTransient<IPaisCommand, PaisCommand>();
 builder.Services.AddTransient<ISistemaCommand, SistemaCommand>();

@@ -44,6 +44,7 @@ public partial class AmhWebDbContext : DbContext
     public virtual DbSet<Sistema> Sistema { get; set; }
     public virtual DbSet<Usuario> Usuario { get; set; }
     public virtual DbSet<UsuarioSistema> UsuarioSistema { get; set; }
+    public virtual DbSet<Cancion> Cancion { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +58,13 @@ public partial class AmhWebDbContext : DbContext
         modelBuilder.Entity<Banco>(entity =>
         {
             entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Cancion>(entity =>
+        {
+            entity.Property(e => e.NombreSolicitante)
                 .HasMaxLength(50)
                 .IsUnicode(false);
         });
