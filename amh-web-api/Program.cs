@@ -146,6 +146,7 @@ builder.Services.AddTransient<ISistemaService, SistemaService>();
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IUsuarioSistemaService, UsuarioSistemaService>();
 builder.Services.AddTransient<ITokenServices, TokenServices>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddTransient<ICancionQuery, CancionQuery>();
 builder.Services.AddTransient<ICiudadQuery, CiudadQuery>();
