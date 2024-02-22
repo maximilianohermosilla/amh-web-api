@@ -28,12 +28,19 @@ namespace Application.UseCases
 
                 mailMessage.From = new MailAddress(from);
                 //mailMessage.To.Add("maximiliano_hermosilla@hotmail.com");
-                mailMessage.To.Add(request.Destinatario);
+
+                foreach (var address in request.Destinatario.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    mailMessage.To.Add(address);
+                }
+
+                //mailMessage.To.Add(request.Destinatario);
                 mailMessage.Subject = request.Asunto;
                 mailMessage.Body = html;
                 mailMessage.IsBodyHtml = true;
 
-                sc.Host = "c2021803.ferozo.com";
+                //sc.Host = "c2021803.ferozo.com";
+                sc.Host = "c1652094.ferozo.com";
                 string str1 = "gmail.com";
 
                 if (from.Contains(str1))
