@@ -142,13 +142,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(TipoTarjetaRequest entity, int id)
+        public async Task<ResponseModel> Update(TipoTarjetaRequest entity)
         {
             ResponseModel response = new ResponseModel();
             TipoTarjetaResponse tipoTarjetaResponse = new TipoTarjetaResponse();
             try
             {
-                var tipoTarjeta = await _tipoTarjetaQuery.GetById(id);
+                var tipoTarjeta = await _tipoTarjetaQuery.GetById(entity.Id);
 
                 if (tipoTarjeta == null)
                 {

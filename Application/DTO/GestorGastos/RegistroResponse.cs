@@ -7,11 +7,11 @@
         public int? IdEmpresa { get; set; }
         public string? EmpresaNombre { get; set; }
         public int? IdSuscripcion { get; set; }
-        public string? SuscripcionNombre { get; set; }
+        public int? IdCategoriaGasto { get; set; }
+        public string? CategoriaGastoNombre { get; set; }
         public int IdCuenta { get; set; }
-        public string? CuentaNombre { get; set; }
+        public CuentaResponse? Cuenta { get; set; }
         public int? IdRegistroVinculado { get; set; }
-        public string? RegistroVinculadoDescripcion { get; set; }
         public int? NumeroCuota { get; set; }
         public DateTime Fecha { get; set; }
         public decimal Valor { get; set; }

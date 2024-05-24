@@ -13,9 +13,9 @@ namespace AccessData.Query.GestorGastos
             _context = context;
         }
 
-        public async Task<List<Suscripcion>> GetAll()
+        public async Task<List<Suscripcion>> GetAll(int idUsuario, string? periodo)
         {
-            var lista = await _context.Suscripcion.ToListAsync();
+            var lista = await _context.Suscripcion.Where(m => m.IdUsuario == idUsuario && (periodo == null || m.Registros.Select(r => r.Periodo).Contains(periodo))).ToListAsync();
             return lista;
         }
 

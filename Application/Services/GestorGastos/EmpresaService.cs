@@ -141,13 +141,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(EmpresaRequest entity, int id)
+        public async Task<ResponseModel> Update(EmpresaRequest entity)
         {
             ResponseModel response = new ResponseModel();
             EmpresaResponse empresaResponse = new EmpresaResponse();
             try
             {
-                var empresa = await _empresaQuery.GetById(id);
+                var empresa = await _empresaQuery.GetById(entity.Id);
 
                 if (empresa == null)
                 {

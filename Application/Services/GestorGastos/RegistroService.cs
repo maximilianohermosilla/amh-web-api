@@ -28,7 +28,7 @@ namespace Application.Services.GestorGastos
         public async Task<ResponseModel> Delete(int id)
         {
             ResponseModel response = new ResponseModel();
-            RegistroResponse registroResponse = new RegistroResponse();
+            RegistroFullResponse registroResponse = new RegistroFullResponse();
             try
             {
                 var registro = await _registroQuery.GetById(id);
@@ -42,7 +42,7 @@ namespace Application.Services.GestorGastos
                 }
 
                 await _registroCommand.Delete(registro);
-                registroResponse = _mapper.Map<RegistroResponse>(registro);
+                registroResponse = _mapper.Map<RegistroFullResponse>(registro);
 
                 _logger.LogInformation("Se eliminó el registro: " + id + ", " + registro.Descripcion);
             }
@@ -59,14 +59,14 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int idUsuario, string? periodo)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<Registro> lista = await _registroQuery.GetAll();
-                List<RegistroResponse> listaDTO = _mapper.Map<List<RegistroResponse>>(lista);
+                List<Registro> lista = await _registroQuery.GetAll(idUsuario, periodo);
+                List<RegistroFullResponse> listaDTO = _mapper.Map<List<RegistroFullResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
@@ -99,7 +99,7 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
 
-                RegistroResponse RegistroResponse = _mapper.Map<RegistroResponse>(registro);
+                RegistroFullResponse RegistroResponse = _mapper.Map<RegistroFullResponse>(registro);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
@@ -118,12 +118,12 @@ namespace Application.Services.GestorGastos
         public async Task<ResponseModel> Insert(RegistroRequest entity)
         {
             ResponseModel response = new ResponseModel();
-            RegistroResponse registroResponse = new RegistroResponse();
+            RegistroFullResponse registroResponse = new RegistroFullResponse();
             try
             {
                 Registro registro = _mapper.Map<Registro>(entity);
                 registro = await _registroCommand.Insert(registro);
-                registroResponse = _mapper.Map<RegistroResponse>(registro);
+                registroResponse = _mapper.Map<RegistroFullResponse>(registro);
 
                 _logger.LogInformation("Se insertó un nuevo registro: " + registro.Id + ". Descripcion: " + registro.Descripcion);
             }
@@ -142,13 +142,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(RegistroRequest entity, int id)
+        public async Task<ResponseModel> Update(RegistroRequest entity)
         {
             ResponseModel response = new ResponseModel();
-            RegistroResponse registroResponse = new RegistroResponse();
+            RegistroFullResponse registroResponse = new RegistroFullResponse();
             try
             {
-                var registro = await _registroQuery.GetById(id);
+                var registro = await _registroQuery.GetById(entity.Id);
 
                 if (registro == null)
                 {
@@ -158,10 +158,10 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
 
-                registro.Descripcion = entity.Descripcion;
+                registro = _mapper.Map<RegistroRequest, Registro>(entity, registro);
 
                 await _registroCommand.Update(registro);
-                registroResponse = _mapper.Map<RegistroResponse>(registro);
+                registroResponse = _mapper.Map<RegistroFullResponse>(registro);
 
                 _logger.LogInformation("Se actualizó el registro: " + registro.Id + ". Descripcion anterior: " + registro.Descripcion + ". Descripcion actual: " + entity.Descripcion);
             }

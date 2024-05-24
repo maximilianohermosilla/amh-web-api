@@ -5,10 +5,10 @@ namespace Application.Interfaces.GestorGastos.IServices
 {
     public interface ICuentaService
     {
-        Task<ResponseModel> GetAll();
+        Task<ResponseModel> GetAll(int idUsuario);
         Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(CuentaRequest entity);
-        Task<ResponseModel> Update(CuentaRequest entity, int id);
+        Task<ResponseModel> Update(CuentaRequest entity);
         Task<ResponseModel> Delete(int id);
     }
 }

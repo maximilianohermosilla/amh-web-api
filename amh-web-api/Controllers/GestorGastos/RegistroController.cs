@@ -17,11 +17,11 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int idUsuario, string? periodo)
         {
             try
             {
-                var response = await _service.GetAll();
+                var response = await _service.GetAll(idUsuario, periodo);
 
                 if (response.statusCode == 400)
                 {
@@ -40,29 +40,29 @@ namespace amh_web_api.Controllers.GestorGastos
             }
         }
 
-        [HttpGet("IdRegistro")]
-        public async Task<IActionResult> GetById(int Id)
-        {
-            try
-            {
-                var response = await _service.GetById(Id);
+        //[HttpGet("IdRegistro")]
+        //public async Task<IActionResult> GetById(int Id)
+        //{
+        //    try
+        //    {
+        //        var response = await _service.GetById(Id);
 
-                if (response.statusCode == 400)
-                {
-                    return BadRequest(new BadRequest { message = response.message });
-                }
-                if (response.statusCode == 404)
-                {
-                    return NotFound(new BadRequest { message = response.message });
-                }
+        //        if (response.statusCode == 400)
+        //        {
+        //            return BadRequest(new BadRequest { message = response.message });
+        //        }
+        //        if (response.statusCode == 404)
+        //        {
+        //            return NotFound(new BadRequest { message = response.message });
+        //        }
 
-                return Ok(response.response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BadRequest { message = ex.Message });
-            }
-        }
+        //        return Ok(response.response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new BadRequest { message = ex.Message });
+        //    }
+        //}
 
         [HttpPost]
         //[Authorize(Roles = "Administrador")]
@@ -93,13 +93,13 @@ namespace amh_web_api.Controllers.GestorGastos
 
         [HttpPut]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Update(RegistroRequest request, int id)
+        public async Task<IActionResult> Update(RegistroRequest request)
         {
             try
             {
                 if (request.Descripcion != "")
                 {
-                    var response = await _service.Update(request, id);
+                    var response = await _service.Update(request);
                     if (response != null && response.response != null)
                     {
                         return new JsonResult(new { Message = "Se ha actualizado el registro exitosamente.", Response = response }) { StatusCode = 200 };

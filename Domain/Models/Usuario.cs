@@ -26,9 +26,13 @@ public partial class Usuario
 
     public virtual ICollection<Registro> Registros { get; } = new List<Registro>();
 
+    public virtual ICollection<RegistroVinculado> RegistrosVinculados { get; } = new List<RegistroVinculado>();
+
     public virtual ICollection<Suscripcion> Suscripciones { get; } = new List<Suscripcion>();
 
     public virtual ICollection<Tarjeta> Tarjetas { get; } = new List<Tarjeta>();
 
     public virtual ICollection<UsuarioSistema> UsuariosSistema { get; } = new List<UsuarioSistema>();
+
+    public virtual ICollection<Ingreso> Ingresos { get; } = new List<Ingreso>();
 }

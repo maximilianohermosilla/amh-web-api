@@ -59,13 +59,13 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int idUsuario, string? periodo)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<Suscripcion> lista = await _suscripcionQuery.GetAll();
+                List<Suscripcion> lista = await _suscripcionQuery.GetAll(idUsuario, periodo);
                 List<SuscripcionResponse> listaDTO = _mapper.Map<List<SuscripcionResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
@@ -141,13 +141,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(SuscripcionRequest entity, int id)
+        public async Task<ResponseModel> Update(SuscripcionRequest entity)
         {
             ResponseModel response = new ResponseModel();
             SuscripcionResponse suscripcionResponse = new SuscripcionResponse();
             try
             {
-                var suscripcion = await _suscripcionQuery.GetById(id);
+                var suscripcion = await _suscripcionQuery.GetById(entity.Id);
 
                 if (suscripcion == null)
                 {
@@ -157,7 +157,7 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
 
-                suscripcion.Nombre = entity.Nombre;
+                suscripcion = _mapper.Map<SuscripcionRequest, Suscripcion>(entity, suscripcion);
 
                 await _suscripcionCommand.Update(suscripcion);
                 suscripcionResponse = _mapper.Map<SuscripcionResponse>(suscripcion);

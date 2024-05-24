@@ -93,13 +93,13 @@ namespace amh_web_api.Controllers.GestorGastos
 
         [HttpPut]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Update(EmpresaRequest request, int id)
+        public async Task<IActionResult> Update(EmpresaRequest request)
         {
             try
             {
                 if (request.Nombre != "")
                 {
-                    var response = await _service.Update(request, id);
+                    var response = await _service.Update(request);
                     if (response != null && response.response != null)
                     {
                         return new JsonResult(new { Message = "Se ha actualizado la empresa exitosamente.", Response = response }) { StatusCode = 200 };

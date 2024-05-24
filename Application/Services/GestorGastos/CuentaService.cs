@@ -59,13 +59,13 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int idUsuario)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<Cuenta> lista = await _cuentaQuery.GetAll();
+                List<Cuenta> lista = await _cuentaQuery.GetAll(idUsuario);
                 List<CuentaResponse> listaDTO = _mapper.Map<List<CuentaResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
@@ -120,6 +120,7 @@ namespace Application.Services.GestorGastos
             CuentaResponse cuentaResponse = new CuentaResponse();
             try
             {
+                entity.IdTarjeta = entity.IdTarjeta == 0 ? null : entity.IdTarjeta;
                 Cuenta cuenta = _mapper.Map<Cuenta>(entity);
                 cuenta = await _cuentaCommand.Insert(cuenta);
                 cuentaResponse = _mapper.Map<CuentaResponse>(cuenta);
@@ -141,13 +142,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(CuentaRequest entity, int id)
+        public async Task<ResponseModel> Update(CuentaRequest entity)
         {
             ResponseModel response = new ResponseModel();
             CuentaResponse cuentaResponse = new CuentaResponse();
             try
             {
-                var cuenta = await _cuentaQuery.GetById(id);
+                var cuenta = await _cuentaQuery.GetById(entity.Id);
 
                 if (cuenta == null)
                 {
@@ -156,8 +157,8 @@ namespace Application.Services.GestorGastos
                     response.response = null;
                     return response;
                 }
-
-                cuenta.Nombre = entity.Nombre;
+                                
+                cuenta = _mapper.Map<CuentaRequest, Cuenta>(entity, cuenta);
 
                 await _cuentaCommand.Update(cuenta);
                 cuentaResponse = _mapper.Map<CuentaResponse>(cuenta);

@@ -5,10 +5,10 @@ namespace Application.Interfaces.GestorGastos.IServices
 {
     public interface ISuscripcionService
     {
-        Task<ResponseModel> GetAll();
+        Task<ResponseModel> GetAll(int idUsuario, string? periodo);
         Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(SuscripcionRequest entity);
-        Task<ResponseModel> Update(SuscripcionRequest entity, int id);
+        Task<ResponseModel> Update(SuscripcionRequest entity);
         Task<ResponseModel> Delete(int id);
     }
 }

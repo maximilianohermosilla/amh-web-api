@@ -5,10 +5,10 @@ namespace Application.Interfaces.GestorGastos.IServices
 {
     public interface IRegistroService
     {
-        Task<ResponseModel> GetAll();
+        Task<ResponseModel> GetAll(int idUsuario, string? periodo);
         Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(RegistroRequest entity);
-        Task<ResponseModel> Update(RegistroRequest entity, int id);
+        Task<ResponseModel> Update(RegistroRequest entity);
         Task<ResponseModel> Delete(int id);
     }
 }

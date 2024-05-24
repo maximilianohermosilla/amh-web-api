@@ -142,13 +142,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(BancoRequest entity, int id)
+        public async Task<ResponseModel> Update(BancoRequest entity)
         {
             ResponseModel response = new ResponseModel();
             BancoResponse bancoResponse = new BancoResponse();
             try
             {
-                var banco = await _bancoQuery.GetById(id);
+                var banco = await _bancoQuery.GetById(entity.Id);
 
                 if (banco == null)
                 {

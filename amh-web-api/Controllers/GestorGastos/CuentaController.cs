@@ -21,12 +21,12 @@ namespace amh_web_api.Controllers.GestorGastos
             _service = service;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("IdUsuario")]
+        public async Task<IActionResult> GetAll(int IdUsuario)
         {
             try
             {
-                var response = await _service.GetAll();
+                var response = await _service.GetAll(IdUsuario);
 
                 if (response.statusCode == 400)
                 {
@@ -45,29 +45,29 @@ namespace amh_web_api.Controllers.GestorGastos
             }
         }
 
-        [HttpGet("IdCuenta")]
-        public async Task<IActionResult> GetById(int Id)
-        {
-            try
-            {
-                var response = await _service.GetById(Id);
+        //[HttpGet("IdCuenta")]
+        //public async Task<IActionResult> GetById(int Id)
+        //{
+        //    try
+        //    {
+        //        var response = await _service.GetById(Id);
 
-                if (response.statusCode == 400)
-                {
-                    return BadRequest(new BadRequest { message = response.message });
-                }
-                if (response.statusCode == 404)
-                {
-                    return NotFound(new BadRequest { message = response.message });
-                }
+        //        if (response.statusCode == 400)
+        //        {
+        //            return BadRequest(new BadRequest { message = response.message });
+        //        }
+        //        if (response.statusCode == 404)
+        //        {
+        //            return NotFound(new BadRequest { message = response.message });
+        //        }
 
-                return Ok(response.response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BadRequest { message = ex.Message });
-            }
-        }
+        //        return Ok(response.response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new BadRequest { message = ex.Message });
+        //    }
+        //}
 
         [HttpPost]
         //[Authorize(Roles = "Administrador")]
@@ -98,13 +98,13 @@ namespace amh_web_api.Controllers.GestorGastos
 
         [HttpPut]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Update(CuentaRequest request, int id)
+        public async Task<IActionResult> Update(CuentaRequest request)
         {
             try
             {
                 if (request.Nombre != "")
                 {
-                    var response = await _service.Update(request, id);
+                    var response = await _service.Update(request);
                     if (response != null && response.response != null)
                     {
                         return new JsonResult(new { Message = "Se ha actualizado la cuenta exitosamente.", Response = response }) { StatusCode = 200 };

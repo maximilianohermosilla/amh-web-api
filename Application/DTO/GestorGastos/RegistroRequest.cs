@@ -2,6 +2,7 @@
 {
     public class RegistroRequest
     {
+        public int Id { get; set; }
         public string? Descripcion { get; set; }
         public int? IdEmpresa { get; set; }
         public int? IdSuscripcion { get; set; }

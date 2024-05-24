@@ -22,6 +22,8 @@ public partial class AmhWebDbContext : DbContext
     //GESTOR GASTOS
     public virtual DbSet<Banco> Banco { get; set; }
     public virtual DbSet<Cuenta> Cuenta { get; set; }
+    public virtual DbSet<CategoriaGasto> CategoriaGasto { get; set; }
+    public virtual DbSet<CategoriaIngreso> CategoriaIngreso { get; set; }
     public virtual DbSet<Empresa> Empresa { get; set; }
     public virtual DbSet<Registro> Registro { get; set; }
     public virtual DbSet<RegistroVinculado> RegistroVinculado { get; set; }
@@ -73,6 +75,20 @@ public partial class AmhWebDbContext : DbContext
         {
             entity.Property(e => e.Nombre)
                 .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<CategoriaGasto>(entity =>
+        {
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(50)                
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<CategoriaIngreso>(entity =>
+        {
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 
@@ -177,6 +193,25 @@ public partial class AmhWebDbContext : DbContext
                 .HasConstraintName("FK_Expediente_SituacionRevista");
         });
 
+        modelBuilder.Entity<Ingreso>(entity =>
+        {
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+
+            entity.Property(e => e.Valor).HasColumnType("numeric(25, 2)");
+
+            entity.HasOne(d => d.Usuario).WithMany(p => p.Ingresos)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("FK_Ingreso_Usuario");
+
+            entity.HasOne(d => d.CategoriaIngreso).WithMany(p => p.Ingresos)
+                .HasForeignKey(d => d.IdCategoriaIngreso)
+                .HasConstraintName("FK_Ingreso_CategoriaIngreso");
+        });
+
         modelBuilder.Entity<Log>(entity =>
         {
             entity.Property(e => e.TimeStamp).HasColumnType("datetime");
@@ -232,6 +267,14 @@ public partial class AmhWebDbContext : DbContext
                 .HasForeignKey(d => d.IdRegistroVinculado)
                 .HasConstraintName("FK_Registro_RegistroVinculado");
 
+            entity.HasOne(d => d.Usuario).WithMany(p => p.Registros)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("FK_Registro_Usuario");
+
+            entity.HasOne(d => d.CategoriaGasto).WithMany(p => p.Registros)
+                .HasForeignKey(d => d.IdCategoriaGasto)
+                .HasConstraintName("FK_Registro_CategoriaGasto");
+
             entity.HasOne(d => d.Suscripcion).WithMany(p => p.Registros)
                 .HasForeignKey(d => d.IdSuscripcion)
                 .HasConstraintName("FK_Registro_Suscripcion");
@@ -247,6 +290,10 @@ public partial class AmhWebDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.ValorFinal).HasColumnType("numeric(25, 2)");
+
+            entity.HasOne(d => d.Usuario).WithMany(p => p.RegistrosVinculados)
+               .HasForeignKey(d => d.IdUsuario)
+               .HasConstraintName("FK_RegistroVinculado_Usuario");
         });
 
         modelBuilder.Entity<Sistema>(entity =>
@@ -275,6 +322,11 @@ public partial class AmhWebDbContext : DbContext
             entity.HasOne(d => d.Usuario).WithMany(p => p.Suscripciones)
                 .HasForeignKey(d => d.IdUsuario)
                 .HasConstraintName("FK_Suscripcion_Usuario");
+
+            entity.HasOne(d => d.CategoriaGasto).WithMany(p => p.Suscripciones)
+                .HasForeignKey(d => d.IdCategoriaGasto)
+                .HasConstraintName("FK_Suscripcion_CategoriaGasto");
+
         });
 
         modelBuilder.Entity<Tarjeta>(entity =>

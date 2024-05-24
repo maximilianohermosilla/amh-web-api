@@ -32,10 +32,11 @@ using AccessData.Commands.MayiBeerCollection;
 using AccessData.Query.MayiBeerCollection;
 using Application.DTO.MayiBeerCollection;
 using Application.UseCases;
+using Application.DTO.GestorGastos;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//ADD MAPERS
+//ADD MAPPERS
 builder.Services.AddAutoMapper(config =>
 {
     #region GENERAL
@@ -102,14 +103,81 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<EstiloResponse, Estilo>();
 
     config.CreateMap<Marca, MarcaResponse>();
-    config.CreateMap<MarcaResponse, Marca>(); 
+    config.CreateMap<MarcaResponse, Marca>();
     #endregion
 
-    //GESTOR EXPEDIENTES
+    #region GESTOR EXPEDIENTES
     config.CreateMap<Expediente, ExpedienteDTO>();
     config.CreateMap<ExpedienteDTO, Expediente>();
+    #endregion
 
-    //GESTOR GASTOS
+    #region GESTOR GASTOS
+    config.CreateMap<Banco, BancoRequest>();
+    config.CreateMap<BancoRequest, Banco>();
+    config.CreateMap<Banco, BancoResponse>();
+    config.CreateMap<BancoResponse, Banco>();
+
+    config.CreateMap<CategoriaGasto, CategoriaGastoRequest>();
+    config.CreateMap<CategoriaGastoRequest, CategoriaGasto>();
+    config.CreateMap<CategoriaGasto, CategoriaGastoResponse>();
+    config.CreateMap<CategoriaGastoResponse, CategoriaGasto>();
+
+    config.CreateMap<CategoriaIngreso, CategoriaIngresoRequest>();
+    config.CreateMap<CategoriaIngresoRequest, CategoriaIngreso>();
+    config.CreateMap<CategoriaIngreso, CategoriaIngresoResponse>();
+    config.CreateMap<CategoriaIngresoResponse, CategoriaIngreso>();
+
+    config.CreateMap<Cuenta, CuentaRequest>();
+    config.CreateMap<CuentaRequest, Cuenta>();
+    config.CreateMap<Cuenta, CuentaResponse>();
+    config.CreateMap<CuentaResponse, Cuenta>();
+
+    config.CreateMap<Empresa, EmpresaRequest>();
+    config.CreateMap<EmpresaRequest, Empresa>();
+    config.CreateMap<Empresa, EmpresaResponse>();
+    config.CreateMap<EmpresaResponse, Empresa>();
+
+    config.CreateMap<Ingreso, IngresoRequest>();
+    config.CreateMap<IngresoRequest, Ingreso>();
+    config.CreateMap<Ingreso, IngresoResponse>();
+    config.CreateMap<IngresoResponse, Ingreso>();
+
+    config.CreateMap<Registro, RegistroRequest>();
+    config.CreateMap<RegistroRequest, Registro>();
+    config.CreateMap<Registro, RegistroResponse>();
+    config.CreateMap<RegistroResponse, Registro>();
+    config.CreateMap<Registro, RegistroFullResponse>();
+    config.CreateMap<RegistroFullResponse, Registro>();
+
+    config.CreateMap<RegistroVinculado, RegistroVinculadoRequest>();
+    config.CreateMap<RegistroVinculadoRequest, RegistroVinculado>();
+    config.CreateMap<RegistroVinculado, RegistroVinculadoResponse>();
+    config.CreateMap<RegistroVinculadoResponse, RegistroVinculado>();
+    config.CreateMap<RegistroVinculado, RegistroVinculadoFullResponse>();
+    config.CreateMap<RegistroVinculadoFullResponse, RegistroVinculado>();
+
+    config.CreateMap<Suscripcion, SuscripcionRequest>();
+    config.CreateMap<SuscripcionRequest, Suscripcion>();
+    config.CreateMap<Suscripcion, SuscripcionResponse>();
+    config.CreateMap<SuscripcionResponse, Suscripcion>();
+    config.CreateMap<Suscripcion, SuscripcionFullResponse>();
+    config.CreateMap<SuscripcionFullResponse, Suscripcion>();
+
+    config.CreateMap<Tarjeta, TarjetaRequest>();
+    config.CreateMap<TarjetaRequest, Tarjeta>();
+    config.CreateMap<Tarjeta, TarjetaResponse>();
+    config.CreateMap<TarjetaResponse, Tarjeta>();
+
+    config.CreateMap<TipoTarjeta, TipoTarjetaRequest>();
+    config.CreateMap<TipoTarjetaRequest, TipoTarjeta>();
+    config.CreateMap<TipoTarjeta, TipoTarjetaResponse>();
+    config.CreateMap<TipoTarjetaResponse, TipoTarjeta>();
+
+    config.CreateMap<TipoCuenta, TipoCuentaRequest>();
+    config.CreateMap<TipoCuentaRequest, TipoCuenta>();
+    config.CreateMap<TipoCuenta, TipoCuentaResponse>();
+    config.CreateMap<TipoCuentaResponse, TipoCuenta>();
+
     config.CreateMap<Tarjeta, TarjetaDTO>();
     config.CreateMap<TarjetaDTO, Tarjeta>();
 
@@ -118,6 +186,7 @@ builder.Services.AddAutoMapper(config =>
 
     config.CreateMap<Registro, RegistroDTO>();
     config.CreateMap<RegistroDTO, Registro>();
+    #endregion
 
 }, typeof(Program));
 
@@ -186,7 +255,10 @@ builder.Services.AddTransient<ISituacionRevistaCommand, SituacionRevistaCommand>
 #region GestorGastos
 builder.Services.AddTransient<IBancoService, BancoService>();
 builder.Services.AddTransient<ICuentaService, CuentaService>();
+builder.Services.AddTransient<ICategoriaGastoService, CategoriaGastoService>();
+builder.Services.AddTransient<ICategoriaIngresoService, CategoriaIngresoService>();
 builder.Services.AddTransient<IEmpresaService, EmpresaService>();
+builder.Services.AddTransient<IIngresoService, IngresoService>();
 builder.Services.AddTransient<IRegistroService, RegistroService>();
 builder.Services.AddTransient<IRegistroVinculadoService, RegistroVinculadoService>();
 builder.Services.AddTransient<ISuscripcionService, SuscripcionService>();
@@ -196,7 +268,10 @@ builder.Services.AddTransient<ITipoTarjetaService, TipoTarjetaService>();
 
 builder.Services.AddTransient<IBancoQuery, BancoQuery>();
 builder.Services.AddTransient<ICuentaQuery, CuentaQuery>();
+builder.Services.AddTransient<ICategoriaGastoQuery, CategoriaGastoQuery>();
+builder.Services.AddTransient<ICategoriaIngresoQuery, CategoriaIngresoQuery>();
 builder.Services.AddTransient<IEmpresaQuery, EmpresaQuery>();
+builder.Services.AddTransient<IIngresoQuery, IngresoQuery>();
 builder.Services.AddTransient<IRegistroQuery, RegistroQuery>();
 builder.Services.AddTransient<IRegistroVinculadoQuery, RegistroVinculadoQuery>();
 builder.Services.AddTransient<ISuscripcionQuery, SuscripcionQuery>();
@@ -207,6 +282,7 @@ builder.Services.AddTransient<ITipoTarjetaQuery, TipoTarjetaQuery>();
 builder.Services.AddTransient<IBancoCommand, BancoCommand>();
 builder.Services.AddTransient<ICuentaCommand, CuentaCommand>();
 builder.Services.AddTransient<IEmpresaCommand, EmpresaCommand>();
+builder.Services.AddTransient<IIngresoCommand, IngresoCommand>();
 builder.Services.AddTransient<IRegistroCommand, RegistroCommand>();
 builder.Services.AddTransient<IRegistroVinculadoCommand, RegistroVinculadoCommand>();
 builder.Services.AddTransient<ISuscripcionCommand, SuscripcionCommand>();

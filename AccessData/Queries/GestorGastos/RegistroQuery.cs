@@ -13,15 +13,15 @@ namespace AccessData.Query.GestorGastos
             _context = context;
         }
 
-        public async Task<List<Registro>> GetAll()
+        public async Task<List<Registro>> GetAll(int idUsuario, string? periodo)
         {
-            var lista = await _context.Registro.ToListAsync();
+            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && (periodo == null || r.Periodo!.Contains(periodo))).Include(r => r.Cuenta).Include(r => r.CategoriaGasto).Include(r => r.RegistroVinculado).Include(r => r.Empresa).Include(r => r.Suscripcion).ToListAsync();
             return lista;
         }
 
         public async Task<Registro> GetById(int? id)
         {
-            var element = await _context.Registro.Where(m => m.Id == id).FirstOrDefaultAsync();
+            var element = await _context.Registro.Include(r => r.Cuenta).Include(r => r.CategoriaGasto).Include(r => r.RegistroVinculado).Include(r => r.Empresa).Include(r => r.Suscripcion).Where(m => m.Id == id).FirstOrDefaultAsync();
             return element;
         }
     }

@@ -13,15 +13,15 @@ namespace AccessData.Query.GestorGastos
             _context = context;
         }
 
-        public async Task<List<Cuenta>> GetAll()
+        public async Task<List<Cuenta>> GetAll(int idUsuario)
         {
-            var lista = await _context.Cuenta.ToListAsync();
+            var lista = await _context.Cuenta.Include(t => t.TipoCuenta).Include(t => t.Tarjeta).Where(t => t.IdUsuario == idUsuario).ToListAsync();
             return lista;
         }
 
         public async Task<Cuenta> GetById(int? id)
         {
-            var element = await _context.Cuenta.Where(m => m.Id == id).FirstOrDefaultAsync();
+            var element = await _context.Cuenta.Include(t => t.TipoCuenta).Include(t => t.Tarjeta).Where(m => m.Id == id).FirstOrDefaultAsync();
             return element;
         }
     }

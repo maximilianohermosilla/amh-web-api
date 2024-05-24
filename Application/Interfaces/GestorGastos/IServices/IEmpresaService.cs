@@ -8,7 +8,7 @@ namespace Application.Interfaces.GestorGastos.IServices
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(EmpresaRequest entity);
-        Task<ResponseModel> Update(EmpresaRequest entity, int id);
+        Task<ResponseModel> Update(EmpresaRequest entity);
         Task<ResponseModel> Delete(int id);
     }
 }

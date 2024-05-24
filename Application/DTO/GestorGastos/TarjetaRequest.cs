@@ -2,6 +2,7 @@
 {
     public class TarjetaRequest
     {
+        public int Id { get; set; }
         public string? Numero { get; set; }
         public string? Vencimiento { get; set; }
         public int? IdBanco { get; set; }

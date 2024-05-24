@@ -2,6 +2,7 @@
 {
     public class SuscripcionRequest
     {
+        public int Id { get; set; }
         public string Nombre { get; set; }
         public DateTime FechaDesde { get; set; }
         public DateTime? FechaHasta { get; set; }

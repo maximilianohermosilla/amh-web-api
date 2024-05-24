@@ -59,13 +59,13 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int idUsuario)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<Tarjeta> lista = await _tarjetaQuery.GetAll();
+                List<Tarjeta> lista = await _tarjetaQuery.GetAll(idUsuario);
                 List<TarjetaResponse> listaDTO = _mapper.Map<List<TarjetaResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
@@ -141,13 +141,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(TarjetaRequest entity, int id)
+        public async Task<ResponseModel> Update(TarjetaRequest entity)
         {
             ResponseModel response = new ResponseModel();
             TarjetaResponse tarjetaResponse = new TarjetaResponse();
             try
             {
-                var tarjeta = await _tarjetaQuery.GetById(id);
+                var tarjeta = await _tarjetaQuery.GetById(entity.Id);
 
                 if (tarjeta == null)
                 {
@@ -157,7 +157,7 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
 
-                tarjeta.Numero = entity.Numero;
+                tarjeta = _mapper.Map<TarjetaRequest, Tarjeta>(entity, tarjeta);
 
                 await _tarjetaCommand.Update(tarjeta);
                 tarjetaResponse = _mapper.Map<TarjetaResponse>(tarjeta);

@@ -229,11 +229,32 @@ namespace AccessData.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
                     b.ToTable("CategoriaGasto");
+                });
+
+            modelBuilder.Entity("Domain.Models.GestorGastos.CategoriaIngreso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoriaIngreso");
                 });
 
             modelBuilder.Entity("Domain.Models.GestorGastos.Cuenta", b =>
@@ -302,10 +323,15 @@ namespace AccessData.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("IdCategoriaIngreso")
+                        .HasColumnType("int");
 
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int");
@@ -313,15 +339,14 @@ namespace AccessData.Migrations
                     b.Property<string>("Periodo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(25, 2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioId");
+                    b.HasIndex("IdCategoriaIngreso");
+
+                    b.HasIndex("IdUsuario");
 
                     b.ToTable("Ingreso");
                 });
@@ -333,9 +358,6 @@ namespace AccessData.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CategoriaGastoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
                         .HasMaxLength(100)
@@ -384,7 +406,7 @@ namespace AccessData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoriaGastoId");
+                    b.HasIndex("IdCategoriaGasto");
 
                     b.HasIndex("IdCuenta");
 
@@ -416,10 +438,15 @@ namespace AccessData.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<int?>("IdUsuario")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("ValorFinal")
                         .HasColumnType("numeric(25, 2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdUsuario");
 
                     b.ToTable("RegistroVinculado");
                 });
@@ -431,9 +458,6 @@ namespace AccessData.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CategoriaGastoId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("FechaDesde")
                         .HasColumnType("date");
@@ -458,7 +482,7 @@ namespace AccessData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoriaGastoId");
+                    b.HasIndex("IdCategoriaGasto");
 
                     b.HasIndex("IdUsuario");
 
@@ -867,11 +891,21 @@ namespace AccessData.Migrations
 
             modelBuilder.Entity("Domain.Models.GestorGastos.Ingreso", b =>
                 {
-                    b.HasOne("Domain.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
+                    b.HasOne("Domain.Models.GestorGastos.CategoriaIngreso", "CategoriaIngreso")
+                        .WithMany("Ingresos")
+                        .HasForeignKey("IdCategoriaIngreso")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_Ingreso_CategoriaIngreso");
+
+                    b.HasOne("Domain.Models.Usuario", "Usuario")
+                        .WithMany("Ingresos")
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Ingreso_Usuario");
+
+                    b.Navigation("CategoriaIngreso");
 
                     b.Navigation("Usuario");
                 });
@@ -880,7 +914,8 @@ namespace AccessData.Migrations
                 {
                     b.HasOne("Domain.Models.GestorGastos.CategoriaGasto", "CategoriaGasto")
                         .WithMany("Registros")
-                        .HasForeignKey("CategoriaGastoId");
+                        .HasForeignKey("IdCategoriaGasto")
+                        .HasConstraintName("FK_Registro_CategoriaGasto");
 
                     b.HasOne("Domain.Models.GestorGastos.Cuenta", "Cuenta")
                         .WithMany("Registros")
@@ -921,11 +956,22 @@ namespace AccessData.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Domain.Models.GestorGastos.RegistroVinculado", b =>
+                {
+                    b.HasOne("Domain.Models.Usuario", "Usuario")
+                        .WithMany("RegistrosVinculados")
+                        .HasForeignKey("IdUsuario")
+                        .HasConstraintName("FK_RegistroVinculado_Usuario");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Domain.Models.GestorGastos.Suscripcion", b =>
                 {
                     b.HasOne("Domain.Models.GestorGastos.CategoriaGasto", "CategoriaGasto")
                         .WithMany("Suscripciones")
-                        .HasForeignKey("CategoriaGastoId");
+                        .HasForeignKey("IdCategoriaGasto")
+                        .HasConstraintName("FK_Suscripcion_CategoriaGasto");
 
                     b.HasOne("Domain.Models.Usuario", "Usuario")
                         .WithMany("Suscripciones")
@@ -1047,6 +1093,11 @@ namespace AccessData.Migrations
                     b.Navigation("Suscripciones");
                 });
 
+            modelBuilder.Entity("Domain.Models.GestorGastos.CategoriaIngreso", b =>
+                {
+                    b.Navigation("Ingresos");
+                });
+
             modelBuilder.Entity("Domain.Models.GestorGastos.Cuenta", b =>
                 {
                     b.Navigation("Registros");
@@ -1111,7 +1162,11 @@ namespace AccessData.Migrations
                 {
                     b.Navigation("Cuentas");
 
+                    b.Navigation("Ingresos");
+
                     b.Navigation("Registros");
+
+                    b.Navigation("RegistrosVinculados");
 
                     b.Navigation("Suscripciones");
 

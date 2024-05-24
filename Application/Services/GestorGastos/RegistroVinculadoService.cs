@@ -7,6 +7,7 @@ using Application.Interfaces.MayiBeerCollection.IQueries;
 using AutoMapper;
 using Domain.Models.GestorGastos;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 
 namespace Application.Services.GestorGastos
 {
@@ -59,13 +60,13 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int idUsuario, string? periodo)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<RegistroVinculado> lista = await _registroVinculadoQuery.GetAll();
+                List<RegistroVinculado> lista = await _registroVinculadoQuery.GetAll(idUsuario, periodo);
                 List<RegistroVinculadoResponse> listaDTO = _mapper.Map<List<RegistroVinculadoResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
@@ -142,13 +143,13 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(RegistroVinculadoRequest entity, int id)
+        public async Task<ResponseModel> Update(RegistroVinculadoRequest entity)
         {
             ResponseModel response = new ResponseModel();
             RegistroVinculadoResponse registroVinculadoResponse = new RegistroVinculadoResponse();
             try
             {
-                var registroVinculado = await _registroVinculadoQuery.GetById(id);
+                var registroVinculado = await _registroVinculadoQuery.GetById(entity.Id);
 
                 if (registroVinculado == null)
                 {
@@ -157,8 +158,8 @@ namespace Application.Services.GestorGastos
                     response.response = null;
                     return response;
                 }
-
-                registroVinculado.Descripcion = entity.Descripcion;
+                                
+                registroVinculado = _mapper.Map<RegistroVinculadoRequest, RegistroVinculado>(entity, registroVinculado);
 
                 await _registroVinculadoCommand.Update(registroVinculado);
                 registroVinculadoResponse = _mapper.Map<RegistroVinculadoResponse>(registroVinculado);
