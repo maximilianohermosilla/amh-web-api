@@ -14,15 +14,17 @@ namespace Application.Services.GestorGastos
     {
         private readonly ISuscripcionQuery _suscripcionQuery;
         private readonly ISuscripcionCommand _suscripcionCommand;
+        private readonly IRegistroCommand _registroCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<SuscripcionService> _logger;
 
-        public SuscripcionService(ISuscripcionQuery suscripcionQuery, ISuscripcionCommand suscripcionCommand, IMapper mapper, ILogger<SuscripcionService> logger, ICervezaQuery cervezaQuery)
+        public SuscripcionService(ISuscripcionQuery suscripcionQuery, ISuscripcionCommand suscripcionCommand, IMapper mapper, ILogger<SuscripcionService> logger, ICervezaQuery cervezaQuery, IRegistroCommand registroCommand)
         {
             _suscripcionQuery = suscripcionQuery;
             _suscripcionCommand = suscripcionCommand;
             _mapper = mapper;
             _logger = logger;
+            _registroCommand = registroCommand;
         }
 
         public async Task<ResponseModel> Delete(int id)
@@ -123,6 +125,31 @@ namespace Application.Services.GestorGastos
                 Suscripcion suscripcion = _mapper.Map<Suscripcion>(entity);
                 suscripcion = await _suscripcionCommand.Insert(suscripcion);
                 suscripcionResponse = _mapper.Map<SuscripcionResponse>(suscripcion);
+
+                DateTime fecha = entity.FechaDesde;
+
+                while (fecha <= entity.FechaHasta)
+                {
+                    Registro registro = new Registro();
+                    registro.Descripcion = $"{entity.Nombre}";
+                    registro.IdSuscripcion = suscripcion.Id;
+                    registro.IdEmpresa = entity.IdEmpresa > 0 ? entity.IdEmpresa : null;
+                    registro.IdCuenta = entity.IdCuenta;
+                    registro.IdRegistroVinculado = null;
+                    registro.NumeroCuota = null;
+                    registro.Fecha = fecha;
+                    registro.Valor = entity.ValorActual;
+                    registro.IdUsuario = entity.IdUsuario;
+                    registro.Observaciones = "";
+                    registro.Pagado = false;
+                    registro.FechaPago = null;
+                    registro.IdCategoriaGasto = entity.IdCategoriaGasto > 0 ? entity.IdCategoriaGasto : null;
+                    registro.Periodo = fecha.ToString("yyyy-MM-dd").Substring(0, 7);
+
+                    await _registroCommand.Insert(registro);
+
+                    fecha = fecha.AddMonths(1);
+                }     
 
                 _logger.LogInformation("Se insertó una nueva suscripcion: " + suscripcion.Id + ". Nombre: " + suscripcion.Nombre);
             }
