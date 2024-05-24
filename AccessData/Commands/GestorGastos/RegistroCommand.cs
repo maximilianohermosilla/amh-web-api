@@ -18,6 +18,12 @@ namespace AccessData.Commands.GestorGastos
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteMany(List<Registro> entities)
+        {
+            _context.RemoveRange(entities);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Registro> Insert(Registro entity)
         {
             _context.Add(entity);
@@ -26,12 +32,28 @@ namespace AccessData.Commands.GestorGastos
             return entity;
         }
 
+        public async Task<List<Registro>> InsertMany(List<Registro> entities)
+        {
+            _context.AddRange(entities);
+            await _context.SaveChangesAsync();
+
+            return entities;
+        }
+
         public async Task<Registro> Update(Registro entity)
         {
             _context.Update(entity);
             await _context.SaveChangesAsync();
 
             return entity;
+        }
+
+        public async Task<List<Registro>> UpdateMany(List<Registro> entities)
+        {
+            _context.UpdateRange(entities);
+            await _context.SaveChangesAsync();
+
+            return entities;
         }
     }
 }

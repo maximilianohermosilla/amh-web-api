@@ -15,13 +15,15 @@ namespace Application.Services.GestorGastos
     {
         private readonly IRegistroVinculadoQuery _registroVinculadoQuery;
         private readonly IRegistroVinculadoCommand _registroVinculadoCommand;
+        private readonly IRegistroCommand _registroCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<RegistroVinculadoService> _logger;
 
-        public RegistroVinculadoService(IRegistroVinculadoQuery registroVinculadoQuery, IRegistroVinculadoCommand registroVinculadoCommand, IMapper mapper, ILogger<RegistroVinculadoService> logger, ICervezaQuery cervezaQuery)
+        public RegistroVinculadoService(IRegistroVinculadoQuery registroVinculadoQuery, IRegistroVinculadoCommand registroVinculadoCommand, IMapper mapper, ILogger<RegistroVinculadoService> logger, ICervezaQuery cervezaQuery, IRegistroCommand registroCommand)
         {
             _registroVinculadoQuery = registroVinculadoQuery;
             _registroVinculadoCommand = registroVinculadoCommand;
+            _registroCommand = registroCommand;
             _mapper = mapper;
             _logger = logger;
         }
@@ -67,7 +69,7 @@ namespace Application.Services.GestorGastos
             try
             {
                 List<RegistroVinculado> lista = await _registroVinculadoQuery.GetAll(idUsuario, periodo);
-                List<RegistroVinculadoResponse> listaDTO = _mapper.Map<List<RegistroVinculadoResponse>>(lista);
+                List<RegistroVinculadoFullResponse> listaDTO = _mapper.Map<List<RegistroVinculadoFullResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
@@ -100,7 +102,7 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
 
-                RegistroVinculadoResponse RegistroVinculadoResponse = _mapper.Map<RegistroVinculadoResponse>(registroVinculado);
+                RegistroVinculadoFullResponse RegistroVinculadoResponse = _mapper.Map<RegistroVinculadoFullResponse>(registroVinculado);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
@@ -125,6 +127,27 @@ namespace Application.Services.GestorGastos
                 RegistroVinculado registroVinculado = _mapper.Map<RegistroVinculado>(entity);
                 registroVinculado = await _registroVinculadoCommand.Insert(registroVinculado);
                 registroVinculadoResponse = _mapper.Map<RegistroVinculadoResponse>(registroVinculado);
+
+                for (int i = 1; i <= registroVinculado.Cuotas; i++)
+                {                    
+                    Registro registro = new Registro();
+                    registro.Descripcion = $"{entity.Descripcion} - Cuota {i}/{entity.Cuotas}";
+                    registro.IdSuscripcion = null;
+                    registro.IdEmpresa = entity.IdEmpresa > 0? entity.IdEmpresa: null;
+                    registro.IdCuenta = entity.IdCuenta;
+                    registro.IdRegistroVinculado = registroVinculado.Id;
+                    registro.NumeroCuota = i;
+                    registro.Fecha = entity.Fecha.AddMonths(i - 1);
+                    registro.Valor = entity.ValorFinal / entity.Cuotas;
+                    registro.IdUsuario = entity.IdUsuario;
+                    registro.Observaciones = "";
+                    registro.Pagado = false;
+                    registro.FechaPago = null;
+                    registro.IdCategoriaGasto = entity.IdCategoriaGasto > 0 ? entity.IdCategoriaGasto : null;
+                    registro.Periodo = entity.Fecha.AddMonths(i - 1).ToString("yyyy-MM-dd").Substring(0, 7);
+
+                    await _registroCommand.Insert(registro);
+                }
 
                 _logger.LogInformation("Se insertó un nuevo registro vinculado: " + registroVinculado.Id + ". Descripcion: " + registroVinculado.Descripcion);
             }

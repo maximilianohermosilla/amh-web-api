@@ -66,7 +66,7 @@ namespace Application.Services.GestorGastos
             try
             {
                 List<Suscripcion> lista = await _suscripcionQuery.GetAll(idUsuario, periodo);
-                List<SuscripcionResponse> listaDTO = _mapper.Map<List<SuscripcionResponse>>(lista);
+                List<SuscripcionFullResponse> listaDTO = _mapper.Map<List<SuscripcionFullResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
@@ -99,7 +99,7 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
 
-                SuscripcionResponse SuscripcionResponse = _mapper.Map<SuscripcionResponse>(suscripcion);
+                SuscripcionFullResponse SuscripcionResponse = _mapper.Map<SuscripcionFullResponse>(suscripcion);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
