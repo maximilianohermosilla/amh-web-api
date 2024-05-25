@@ -19,6 +19,12 @@ namespace AccessData.Query.GestorGastos
             return lista;
         }
 
+        public async Task<List<Registro>> GetAllBySuscripcionAndDate(int? idUsuario, int idSuscripcion, DateTime? fechaDesde)
+        {
+            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && r.IdSuscripcion == idSuscripcion && r.Fecha >= fechaDesde).ToListAsync();
+            return lista;
+        }
+
         public async Task<Registro> GetById(int? id)
         {
             var element = await _context.Registro.Include(r => r.Cuenta).Include(r => r.CategoriaGasto).Include(r => r.RegistroVinculado).Include(r => r.Empresa).Include(r => r.Suscripcion).Where(m => m.Id == id).FirstOrDefaultAsync();
