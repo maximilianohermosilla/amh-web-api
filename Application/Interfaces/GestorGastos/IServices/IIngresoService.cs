@@ -5,7 +5,7 @@ namespace Application.Interfaces.GestorGastos.IServices
 {
     public interface IIngresoService
     {
-        Task<ResponseModel> GetAll(int idUsuario, string? periodo);
+        Task<ResponseModel> GetAll(int idUsuario, string? periodo, int? categoria);
         Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(IngresoRequest entity);
         Task<ResponseModel> Update(IngresoRequest entity);

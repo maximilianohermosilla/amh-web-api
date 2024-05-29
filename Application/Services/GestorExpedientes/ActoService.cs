@@ -1,11 +1,13 @@
 ﻿using amh_web_api.DTO;
 using Application.DTO.GestorExpedientes;
+using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorExpedientes.ICommands;
 using Application.Interfaces.GestorExpedientes.IQueries;
 using Application.Interfaces.GestorExpedientes.IServices;
 using Application.Interfaces.MayiBeerCollection.IQueries;
 using AutoMapper;
 using Domain.Models.GestorExpedientes;
+using Domain.Models.GestorGastos;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services.GestorExpedientes
@@ -142,13 +144,13 @@ namespace Application.Services.GestorExpedientes
         }
 
 
-        public async Task<ResponseModel> Update(ActoRequest entity, int id)
+        public async Task<ResponseModel> Update(ActoRequest entity)
         {
             ResponseModel response = new ResponseModel();
             ActoResponse actoResponse = new ActoResponse();
             try
             {
-                var acto = await _actoQuery.GetById(id);
+                var acto = await _actoQuery.GetById(entity.Id);
 
                 if (acto == null)
                 {
@@ -157,8 +159,8 @@ namespace Application.Services.GestorExpedientes
                     response.response = null;
                     return response;
                 }
-
-                acto.Nombre = entity.Nombre;
+                                
+                acto = _mapper.Map<ActoRequest, Acto>(entity, acto);
 
                 await _actoCommand.Update(acto);
                 actoResponse = _mapper.Map<ActoResponse>(acto);

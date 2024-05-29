@@ -33,6 +33,7 @@ using AccessData.Query.MayiBeerCollection;
 using Application.DTO.MayiBeerCollection;
 using Application.UseCases;
 using Application.DTO.GestorGastos;
+using Application.DTO.GestorExpedientes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +108,22 @@ builder.Services.AddAutoMapper(config =>
     #endregion
 
     #region GESTOR EXPEDIENTES
+    config.CreateMap<Acto, ActoRequest>();
+    config.CreateMap<ActoRequest, Acto>();
+    config.CreateMap<Acto, ActoResponse>();
+    config.CreateMap<ActoResponse, Acto>();
+    config.CreateMap<Caratula, CaratulaRequest>();
+    config.CreateMap<CaratulaRequest, Caratula>();
+    config.CreateMap<Caratula, CaratulaResponse>();
+    config.CreateMap<CaratulaResponse, Caratula>();
+    config.CreateMap<Expediente, ExpedienteRequest>();
+    config.CreateMap<ExpedienteRequest, Expediente>();
+    config.CreateMap<Expediente, ExpedienteResponse>();
+    config.CreateMap<ExpedienteResponse, Expediente>();
+    config.CreateMap<SituacionRevista, SituacionRevistaRequest>();
+    config.CreateMap<SituacionRevistaRequest, SituacionRevista>();
+    config.CreateMap<SituacionRevista, SituacionRevistaResponse>();
+    config.CreateMap<SituacionRevistaResponse, SituacionRevista>();
     config.CreateMap<Expediente, ExpedienteDTO>();
     config.CreateMap<ExpedienteDTO, Expediente>();
     #endregion

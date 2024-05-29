@@ -59,13 +59,13 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> GetAll(int idUsuario, string? periodo)
+        public async Task<ResponseModel> GetAll(int idUsuario, string? periodo, int? categoria, bool? pagado)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<Registro> lista = await _registroQuery.GetAll(idUsuario, periodo);
+                List<Registro> lista = await _registroQuery.GetAll(idUsuario, periodo, categoria, pagado);
                 List<RegistroFullResponse> listaDTO = _mapper.Map<List<RegistroFullResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";

@@ -142,13 +142,13 @@ namespace Application.Services.GestorExpedientes
         }
 
 
-        public async Task<ResponseModel> Update(CaratulaRequest entity, int id)
+        public async Task<ResponseModel> Update(CaratulaRequest entity)
         {
             ResponseModel response = new ResponseModel();
             CaratulaResponse caratulaResponse = new CaratulaResponse();
             try
             {
-                var caratula = await _caratulaQuery.GetById(id);
+                var caratula = await _caratulaQuery.GetById(entity.Id);
 
                 if (caratula == null)
                 {
@@ -158,7 +158,7 @@ namespace Application.Services.GestorExpedientes
                     return response;
                 }
 
-                caratula.Nombre = entity.Nombre;
+                caratula = _mapper.Map<CaratulaRequest, Caratula>(entity, caratula);
 
                 await _caratulaCommand.Update(caratula);
                 caratulaResponse = _mapper.Map<CaratulaResponse>(caratula);

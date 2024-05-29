@@ -40,7 +40,7 @@ namespace amh_web_api.Controllers.General
                     return NotFound(new BadRequest { message = response.message });
                 }
 
-                return Ok(response.response);
+                return Ok( new { token = response.response });
             }
             catch (Exception ex)
             {

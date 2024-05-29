@@ -21,7 +21,7 @@ namespace amh_web_api.Controllers.GestorGastos
             _service = service;
         }
 
-        [HttpGet("IdUsuario")]
+        [HttpGet]
         public async Task<IActionResult> GetAll(int IdUsuario)
         {
             try

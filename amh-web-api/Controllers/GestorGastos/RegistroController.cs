@@ -17,11 +17,11 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int idUsuario, string? periodo)
+        public async Task<IActionResult> GetAll(int idUsuario, string? periodo, int? categoria, bool? pagado)
         {
             try
             {
-                var response = await _service.GetAll(idUsuario, periodo);
+                var response = await _service.GetAll(idUsuario, periodo, categoria, pagado);
 
                 if (response.statusCode == 400)
                 {

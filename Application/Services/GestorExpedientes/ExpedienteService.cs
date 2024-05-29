@@ -142,13 +142,13 @@ namespace Application.Services.GestorExpedientes
         }
 
 
-        public async Task<ResponseModel> Update(ExpedienteRequest entity, int id)
+        public async Task<ResponseModel> Update(ExpedienteRequest entity)
         {
             ResponseModel response = new ResponseModel();
             ExpedienteResponse expedienteResponse = new ExpedienteResponse();
             try
             {
-                var expediente = await _expedienteQuery.GetById(id);
+                var expediente = await _expedienteQuery.GetById(entity.Id);
 
                 if (expediente == null)
                 {
@@ -158,7 +158,7 @@ namespace Application.Services.GestorExpedientes
                     return response;
                 }
 
-                expediente.Nombre = entity.Nombre;
+                expediente = _mapper.Map<ExpedienteRequest, Expediente>(entity, expediente);
 
                 await _expedienteCommand.Update(expediente);
                 expedienteResponse = _mapper.Map<ExpedienteResponse>(expediente);

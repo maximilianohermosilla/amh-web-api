@@ -128,9 +128,10 @@ namespace Application.Services.GestorGastos
                 suscripcion = await _suscripcionCommand.Insert(suscripcion);
                 suscripcionResponse = _mapper.Map<SuscripcionResponse>(suscripcion);
 
-                DateTime fecha = entity.FechaDesde;
+                DateTime fecha = entity.ProximoMes? entity.FechaDesde.AddMonths(1) : entity.FechaDesde;
+                DateTime fechaHasta = entity.ProximoMes ? entity.FechaHasta.AddMonths(1) : entity.FechaHasta;
 
-                while (fecha <= entity.FechaHasta)
+                while (fecha <= fechaHasta)
                 {
                     Registro registro = new Registro();
                     registro.Descripcion = $"{entity.Nombre}";

@@ -2,6 +2,7 @@
 {
     public class ExpedienteRequest
     {
+        public int Id { get; set; }
         public string? Nombre { get; set; }
         public string Expediente1 { get; set; } = null!;
         public DateTime? Fecha { get; set; }

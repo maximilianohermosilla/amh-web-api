@@ -40,7 +40,7 @@ namespace amh_web_api.Controllers.GestorExpediente
             }
         }
 
-        [HttpGet("IdExpediente")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetById(int Id)
         {
             try
@@ -93,13 +93,13 @@ namespace amh_web_api.Controllers.GestorExpediente
 
         [HttpPut]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Update(ExpedienteRequest request, int id)
+        public async Task<IActionResult> Update(ExpedienteRequest request)
         {
             try
             {
                 if (request.Nombre != "")
                 {
-                    var response = await _service.Update(request, id);
+                    var response = await _service.Update(request);
                     if (response != null && response.response != null)
                     {
                         return new JsonResult(new { Message = "Se ha actualizado el expediente exitosamente.", Response = response }) { StatusCode = 200 };

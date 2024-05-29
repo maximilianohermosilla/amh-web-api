@@ -1,10 +1,12 @@
 ﻿using amh_web_api.DTO;
+using Application.DTO.GestorExpedientes;
 using Application.DTO.MayiBeerCollection;
 using Application.Interfaces.MayiBeerCollection.ICommands;
 using Application.Interfaces.MayiBeerCollection.IQueries;
 using Application.Interfaces.MayiBeerCollection.IServices;
 using AutoMapper;
 using Domain.Models;
+using Domain.Models.GestorExpedientes;
 using Domain.Models.MayiBeerCollection;
 using Microsoft.Extensions.Logging;
 
@@ -179,8 +181,7 @@ namespace Application.Services.MayiBeerCollection
                     return response;
                 }
 
-                cerveza.Nombre = entity.Nombre;
-                cerveza.Imagen = entity.Imagen;
+                cerveza = _mapper.Map<CervezaRequest, Cerveza>(entity, cerveza);
 
                 await _cervezaCommand.Update(cerveza);
                 cervezaResponse = _mapper.Map<CervezaResponse>(cerveza);

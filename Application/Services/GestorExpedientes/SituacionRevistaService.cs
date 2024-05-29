@@ -142,13 +142,13 @@ namespace Application.Services.GestorExpedientes
         }
 
 
-        public async Task<ResponseModel> Update(SituacionRevistaRequest entity, int id)
+        public async Task<ResponseModel> Update(SituacionRevistaRequest entity)
         {
             ResponseModel response = new ResponseModel();
             SituacionRevistaResponse situacionRevistaResponse = new SituacionRevistaResponse();
             try
             {
-                var situacionRevista = await _situacionRevistaQuery.GetById(id);
+                var situacionRevista = await _situacionRevistaQuery.GetById(entity.Id);
 
                 if (situacionRevista == null)
                 {
@@ -158,7 +158,7 @@ namespace Application.Services.GestorExpedientes
                     return response;
                 }
 
-                situacionRevista.Nombre = entity.Nombre;
+                situacionRevista = _mapper.Map<SituacionRevistaRequest, SituacionRevista>(entity, situacionRevista);
 
                 await _situacionRevistaCommand.Update(situacionRevista);
                 situacionRevistaResponse = _mapper.Map<SituacionRevistaResponse>(situacionRevista);

@@ -1,7 +1,6 @@
 ﻿using amh_web_api.DTO;
 using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.IServices;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace amh_web_api.Controllers.GestorGastos
@@ -18,11 +17,11 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int idUsuario, string? periodo)
+        public async Task<IActionResult> GetAll(int idUsuario, string? periodo, int? categoria)
         {
             try
             {
-                var response = await _service.GetAll(idUsuario, periodo);
+                var response = await _service.GetAll(idUsuario, periodo, categoria);
 
                 if (response.statusCode == 400)
                 {

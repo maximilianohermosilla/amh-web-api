@@ -13,5 +13,6 @@ namespace Application.DTO.GestorGastos
         public int IdUsuario { get; set; }
         public int IdCategoriaIngreso { get; set; }
         public string? CategoriaIngresoNombre { get; set; } = null!;
+        public CategoriaIngresoResponse? CategoriaIngreso { get; set; }
     }
 }

@@ -137,7 +137,7 @@ namespace Application.Services.GestorGastos
                     registro.IdCuenta = entity.IdCuenta;
                     registro.IdRegistroVinculado = registroVinculado.Id;
                     registro.NumeroCuota = i;
-                    registro.Fecha = entity.Fecha.AddMonths(i - 1);
+                    registro.Fecha = entity.ProximoMes ? entity.Fecha.AddMonths(i) : entity.Fecha.AddMonths(i - 1);
                     registro.Valor = entity.ValorFinal / entity.Cuotas;
                     registro.IdUsuario = entity.IdUsuario;
                     registro.Observaciones = "";

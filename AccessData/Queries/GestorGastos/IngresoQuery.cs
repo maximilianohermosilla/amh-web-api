@@ -13,15 +13,23 @@ namespace AccessData.Query.GestorGastos
             _context = context;
         }
 
-        public async Task<List<Ingreso>> GetAll(int idUsuario, string? periodo)
+        public async Task<List<Ingreso>> GetAll(int idUsuario, string? periodo, int? categoria)
         {
-            var lista = await _context.Ingreso.Include(i => i.CategoriaIngreso).Where(i => i.IdUsuario == idUsuario && (periodo == null || i.Periodo!.Contains(periodo))).ToListAsync();
+            var lista = await _context.Ingreso.Include(i => i.CategoriaIngreso).
+                Where(i => i.IdUsuario == idUsuario && 
+                      (periodo == null || i.Periodo!.Contains(periodo)) && 
+                      (categoria == null || i.IdCategoriaIngreso == categoria)).
+                OrderByDescending(r => r.Fecha).ToListAsync();
             return lista;
         }
 
-        public async Task<List<Ingreso>> GetAllByPeriodo(int idUsuario, string? periodo)
+        public async Task<List<Ingreso>> GetAllByPeriodo(int idUsuario, string? periodo, int? categoria)
         {
-            var lista = await _context.Ingreso.Include(i => i.CategoriaIngreso).Where(i => i.IdUsuario == idUsuario && (periodo == null || i.Periodo == periodo)).ToListAsync();
+            var lista = await _context.Ingreso.Include(i => i.CategoriaIngreso).
+                Where(i => i.IdUsuario == idUsuario && 
+                      (periodo == null || i.Periodo == periodo) &&
+                      (categoria == null || i.IdCategoriaIngreso == categoria)).
+                      OrderByDescending(r => r.Fecha).ToListAsync();
             return lista;
         }
 

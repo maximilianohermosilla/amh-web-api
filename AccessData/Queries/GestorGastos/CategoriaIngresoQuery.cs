@@ -15,7 +15,7 @@ namespace AccessData.Query.GestorGastos
 
         public async Task<List<CategoriaIngreso>> GetAll()
         {
-            var lista = await _context.CategoriaIngreso.OrderByDescending(c => c.Id).ToListAsync();
+            var lista = await _context.CategoriaIngreso.ToListAsync();
             return lista;
         }
 

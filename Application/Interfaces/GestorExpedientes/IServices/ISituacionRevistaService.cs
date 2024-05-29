@@ -8,7 +8,7 @@ namespace Application.Interfaces.GestorExpedientes.IServices
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
         Task<ResponseModel> Insert(SituacionRevistaRequest entity);
-        Task<ResponseModel> Update(SituacionRevistaRequest entity, int id);
+        Task<ResponseModel> Update(SituacionRevistaRequest entity);
         Task<ResponseModel> Delete(int id);
     }
 }

@@ -11,5 +11,6 @@
         public int IdCuenta { get; set; }
         public int IdCategoriaGasto { get; set; }
         public DateTime Fecha { get; set; }
+        public bool ProximoMes { get; set; }
     }
 }

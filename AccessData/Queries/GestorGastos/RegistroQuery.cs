@@ -13,15 +13,22 @@ namespace AccessData.Query.GestorGastos
             _context = context;
         }
 
-        public async Task<List<Registro>> GetAll(int idUsuario, string? periodo)
+        public async Task<List<Registro>> GetAll(int idUsuario, string? periodo, int? categoria, bool? pagado)
         {
-            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && (periodo == null || r.Periodo!.Contains(periodo))).Include(r => r.Cuenta).Include(r => r.CategoriaGasto).Include(r => r.RegistroVinculado).Include(r => r.Empresa).Include(r => r.Suscripcion).ToListAsync();
+            var lista = await _context.Registro.
+                Where(r => r.IdUsuario == idUsuario && 
+                      (periodo == null || r.Periodo!.Contains(periodo)) &&
+                      (categoria == null || r.IdCategoriaGasto == categoria) &&
+                      (pagado == null || r.Pagado == pagado)).
+                Include(r => r.Cuenta).Include(r => r.CategoriaGasto).Include(r => r.RegistroVinculado).
+                Include(r => r.Empresa).Include(r => r.Suscripcion).
+                OrderByDescending(r => r.Fecha).ToListAsync();
             return lista;
         }
 
         public async Task<List<Registro>> GetAllBySuscripcionAndDate(int? idUsuario, int idSuscripcion, DateTime? fechaDesde)
         {
-            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && r.IdSuscripcion == idSuscripcion && r.Fecha >= fechaDesde).ToListAsync();
+            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && r.IdSuscripcion == idSuscripcion && r.Fecha >= fechaDesde).OrderByDescending(r => r.Fecha).ToListAsync();
             return lista;
         }
 
