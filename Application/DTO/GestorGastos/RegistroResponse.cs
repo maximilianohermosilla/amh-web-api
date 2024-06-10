@@ -9,6 +9,7 @@
         public int? IdSuscripcion { get; set; }
         public int? IdCategoriaGasto { get; set; }
         public string? CategoriaGastoNombre { get; set; }
+        public CategoriaGastoResponse? CategoriaGasto { get; set; }
         public int IdCuenta { get; set; }
         public CuentaResponse? Cuenta { get; set; }
         public int? IdRegistroVinculado { get; set; }

@@ -15,7 +15,11 @@ namespace AccessData.Query.GestorGastos
 
         public async Task<List<RegistroVinculado>> GetAll(int idUsuario, string? periodo)
         {
-            var lista = await _context.RegistroVinculado.Include(r => r.Registros).
+            var lista = await _context.RegistroVinculado.
+                Include(r => r.Registros).
+                ThenInclude(r => r.Cuenta).
+                Include(r => r.Registros).
+                ThenInclude(r => r.CategoriaGasto).
                 Where(r => r.IdUsuario == idUsuario &&
                 (periodo == null || r.Registros.Any(r => r.Periodo!.Contains(periodo)))
                 ).ToListAsync();

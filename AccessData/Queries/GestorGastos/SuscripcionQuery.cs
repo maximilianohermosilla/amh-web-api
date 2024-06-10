@@ -17,6 +17,11 @@ namespace AccessData.Query.GestorGastos
         {
             var lista = await _context.Suscripcion.
                 Include(m => m.Registros).
+                ThenInclude(r => r.Cuenta).
+                Include(r => r.Registros).
+                ThenInclude(r => r.CategoriaGasto).
+                Include(r => r.Registros).
+                ThenInclude(r => r.Empresa).
                 Where(m => m.IdUsuario == idUsuario &&
                 (periodo == null || m.Registros.Any(r => r.Periodo!.Contains(periodo)))
                 ).ToListAsync();

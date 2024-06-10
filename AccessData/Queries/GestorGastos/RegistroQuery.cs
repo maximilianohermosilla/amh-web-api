@@ -15,7 +15,7 @@ namespace AccessData.Query.GestorGastos
 
         public async Task<List<Registro>> GetAll(int idUsuario, string? periodo, int? categoria, bool? pagado)
         {
-            var lista = await _context.Registro.
+var lista = await _context.Registro.
                 Where(r => r.IdUsuario == idUsuario && 
                       (periodo == null || r.Periodo!.Contains(periodo)) &&
                       (categoria == null || r.IdCategoriaGasto == categoria) &&

@@ -7,7 +7,7 @@
         public int Cuotas { get; set; }
         public decimal ValorFinal { get; set; }
         public int IdUsuario { get; set; }
-        public int IdEmpresa { get; set; }
+        public int? IdEmpresa { get; set; } = null;
         public int IdCuenta { get; set; }
         public int IdCategoriaGasto { get; set; }
         public DateTime Fecha { get; set; }

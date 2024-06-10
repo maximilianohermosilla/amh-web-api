@@ -122,6 +122,7 @@ namespace Application.Services.GestorGastos
             try
             {
                 Registro registro = _mapper.Map<Registro>(entity);
+                //registro.FechaPago = DateTime.Compare(entity.FechaPago, new DateTime(1900,1,1,0,0,0)) == 0? null: entity.FechaPago;
                 registro = await _registroCommand.Insert(registro);
                 registroResponse = _mapper.Map<RegistroFullResponse>(registro);
 
