@@ -5,6 +5,7 @@ using Application.Interfaces.General.ICommands;
 using Application.Interfaces.General.IQueries;
 using Application.Interfaces.General.IServices;
 using AutoMapper;
+using Azure.Core;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -140,6 +141,9 @@ namespace Application.Services.General
                 }
 
                 UsuarioResponse usuarioResponse = _mapper.Map<UsuarioResponse>(usuario);
+
+                var passDecoded = CryptographyHelper.Decrypt(usuario.Password);
+                usuarioResponse.Password = passDecoded;
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;

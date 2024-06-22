@@ -11,5 +11,6 @@
         public string? Mensaje { get; set; }
         public string Destinatario { get; set; }
         public DateTime DateTime { get; set; }
+        public int? IdSistema { get; set; }
     }
 }

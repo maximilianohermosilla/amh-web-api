@@ -1,28 +1,26 @@
-﻿using amh_web_api.DTO;
-using Application.DTO.GestorGastos;
-using Application.Interfaces.GestorGastos.IServices;
-using Domain.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using amh_web_api.DTO;
+using Application.Interfaces.General.IServices;
 
-namespace amh_web_api.Controllers.GestorGastos
+namespace amh_web_api.Controllers.General
 {
-    [Route("gestorGastos/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    public class TarjetaController : ControllerBase
+    public class ParametrosSistemaController : ControllerBase
     {
-        private readonly ITarjetaService _service;
+        private readonly IParametrosSistemaService _service;
 
-        public TarjetaController(ITarjetaService service)
+        public ParametrosSistemaController(IParametrosSistemaService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int IdUsuario)
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var response = await _service.GetAll(IdUsuario);
+                var response = await _service.GetAll();
 
                 if (response.statusCode == 400)
                 {
@@ -41,46 +39,41 @@ namespace amh_web_api.Controllers.GestorGastos
             }
         }
 
-        //[HttpGet("IdTarjeta")]
-        //public async Task<IActionResult> GetById(int Id)
-        //{
-        //    try
-        //    {
-        //        var response = await _service.GetById(Id);
-
-        //        if (response.statusCode == 400)
-        //        {
-        //            return BadRequest(new BadRequest { message = response.message });
-        //        }
-        //        if (response.statusCode == 404)
-        //        {
-        //            return NotFound(new BadRequest { message = response.message });
-        //        }
-
-        //        return Ok(response.response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new BadRequest { message = ex.Message });
-        //    }
-        //}
-
-        [HttpPost]
-        //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Insert(TarjetaRequest request)
+        [HttpGet("IdSistema")]
+        public async Task<IActionResult> GetById(int IdSistema)
         {
             try
             {
-                if (request.Numero == "")
+                var response = await _service.GetByIdSistema(IdSistema);
+
+                if (response.statusCode == 400)
                 {
-                    return BadRequest(new BadRequest { message = "El número de la tarjeta no puede estar vacío" });
+                    return BadRequest(new BadRequest { message = response.message });
+                }
+                if (response.statusCode == 404)
+                {
+                    return NotFound(new BadRequest { message = response.message });
                 }
 
+                return Ok(response.response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BadRequest { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Insert(ParametrosSistemaRequest request)
+        {
+            try
+            {
                 var response = await _service.Insert(request);
 
                 if (response.response == null)
                 {
-                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar la tarjeta. Revise los valores ingresados" });
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar los parámetros del sistema. Revise los valores ingresados" });
                 }
 
                 return Created("", response.response);
@@ -89,30 +82,29 @@ namespace amh_web_api.Controllers.GestorGastos
             {
                 return BadRequest(new BadRequest { message = ex.Message });
             }
-
         }
 
         [HttpPut]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Update(TarjetaRequest request)
+        public async Task<IActionResult> Update(ParametrosSistemaRequest request)
         {
             try
             {
-                if (request.Numero != "")
+                if (request.Host != "")
                 {
                     var response = await _service.Update(request);
                     if (response != null && response.response != null)
                     {
-                        return new JsonResult(new { Message = "Se ha actualizado la tarjeta exitosamente.", Response = response }) { StatusCode = 200 };
+                        return new JsonResult(new { Message = "Se han actualizado los parámetros del sistema exitosamente.", Response = response }) { StatusCode = 200 };
                     }
                     else
                     {
-                        return new JsonResult(new { Message = "No se pudo actualizar la tarjeta" }) { StatusCode = 400 };
+                        return new JsonResult(new { Message = "No se pudieron actualizar los parámetros del sistema" }) { StatusCode = 400 };
                     }
                 }
                 else
                 {
-                    return new JsonResult(new { Message = "El número del tarjeta no puede estar vacío" }) { StatusCode = 400 };
+                    return new JsonResult(new { Message = "El host no puede estar vacío" }) { StatusCode = 400 };
                 }
             }
             catch (Exception ex)
@@ -131,7 +123,7 @@ namespace amh_web_api.Controllers.GestorGastos
 
                 if (response != null && response.response != null)
                 {
-                    return Ok(new { Message = "Se ha eliminado el tarjeta exitosamente.", Response = response });
+                    return Ok(new { Message = "Se han eliminado los parámetros del sistema exitosamente.", Response = response });
                 }
 
                 if (response != null && response.statusCode >= 400 && response.statusCode < 500)
@@ -139,7 +131,7 @@ namespace amh_web_api.Controllers.GestorGastos
                     return BadRequest(new BadRequest { message = response.message });
                 }
 
-                return new JsonResult(new { Message = "No se encuentra la tarjeta" }) { StatusCode = 404 };
+                return new JsonResult(new { Message = "No se encuentran los parámetros del sistema" }) { StatusCode = 404 };
             }
             catch (Exception ex)
             {

@@ -4,6 +4,7 @@ using AccessData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccessData.Migrations
 {
     [DbContext(typeof(AmhWebDbContext))]
-    partial class AmhWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240618013752_EmailConfigurationParametros")]
+    partial class EmailConfigurationParametros
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -752,9 +755,6 @@ namespace AccessData.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Service")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Template")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("User")

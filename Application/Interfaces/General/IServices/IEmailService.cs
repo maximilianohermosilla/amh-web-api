@@ -5,6 +5,6 @@ namespace Application.Interfaces.General.IServices
 {
     public interface IEmailService
     {
-        Task<ResponseModel> SendEmail(EmailRequest email, string from, string password);
+        Task<ResponseModel> SendEmail(EmailRequest email);
     }
 }

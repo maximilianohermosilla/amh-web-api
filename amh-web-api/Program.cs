@@ -62,6 +62,12 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<Sistema, SistemaRequest>();
     config.CreateMap<SistemaRequest, Sistema>();
 
+    config.CreateMap<ParametrosSistema, ParametrosSistemaResponse>();
+    config.CreateMap<ParametrosSistemaResponse, ParametrosSistema>();
+
+    config.CreateMap<ParametrosSistema, ParametrosSistemaRequest>();
+    config.CreateMap<ParametrosSistemaRequest, ParametrosSistema>();
+
     config.CreateMap<Usuario, UsuarioResponse>();
     config.CreateMap<UsuarioResponse, Usuario>();
 
@@ -229,6 +235,7 @@ builder.Services.AddTransient<ICancionService, CancionService>();
 builder.Services.AddTransient<ICiudadService, CiudadService>();
 builder.Services.AddTransient<IPaisService, PaisService>();
 builder.Services.AddTransient<ISistemaService, SistemaService>();
+builder.Services.AddTransient<IParametrosSistemaService, ParametrosSistemaService>();
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IUsuarioSistemaService, UsuarioSistemaService>();
 builder.Services.AddTransient<ITokenServices, TokenServices>();
@@ -238,6 +245,7 @@ builder.Services.AddTransient<ICancionQuery, CancionQuery>();
 builder.Services.AddTransient<ICiudadQuery, CiudadQuery>();
 builder.Services.AddTransient<IPaisQuery, PaisQuery>();
 builder.Services.AddTransient<ISistemaQuery, SistemaQuery>();
+builder.Services.AddTransient<IParametrosSistemaQuery, ParametrosSistemaQuery>();
 builder.Services.AddTransient<IUsuarioQuery, UsuarioQuery>();
 builder.Services.AddTransient<IUsuarioSistemaQuery, UsuarioSistemaQuery>();
 
@@ -245,6 +253,7 @@ builder.Services.AddTransient<ICancionCommand, CancionCommand>();
 builder.Services.AddTransient<ICiudadCommand, CiudadCommand>();
 builder.Services.AddTransient<IPaisCommand, PaisCommand>();
 builder.Services.AddTransient<ISistemaCommand, SistemaCommand>();
+builder.Services.AddTransient<IParametrosSistemaCommand, ParametrosSistemaCommand>();
 builder.Services.AddTransient<IUsuarioCommand, UsuarioCommand>();
 builder.Services.AddTransient<IUsuarioSistemaCommand, UsuarioSistemaCommand>();
 

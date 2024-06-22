@@ -35,7 +35,7 @@ namespace amh_web_api.Controllers.General
                     return BadRequest(new BadRequest { message = "El nombre del remitente no puede estar vacío" });
                 }
 
-                var response = await _service.SendEmail(request, from, password);
+                var response = await _service.SendEmail(request);
 
                 if (response.statusCode > 399)
                 {

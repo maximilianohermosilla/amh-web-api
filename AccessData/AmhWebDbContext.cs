@@ -44,6 +44,7 @@ public partial class AmhWebDbContext : DbContext
     public virtual DbSet<Pais> Pais { get; set; }
     public virtual DbSet<Perfil> Perfil { get; set; }
     public virtual DbSet<Sistema> Sistema { get; set; }
+    public virtual DbSet<ParametrosSistema> ParametrosSistema { get; set; }
     public virtual DbSet<Usuario> Usuario { get; set; }
     public virtual DbSet<UsuarioSistema> UsuarioSistema { get; set; }
     public virtual DbSet<Cancion> Cancion { get; set; }
@@ -398,6 +399,14 @@ public partial class AmhWebDbContext : DbContext
                 .HasForeignKey(d => d.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UsuarioSistema_Usuario");
+        });
+
+        modelBuilder.Entity<ParametrosSistema>(entity =>
+        {
+            entity.HasOne(d => d.Sistema).WithOne(p => p.ParametrosSistema)
+                .HasForeignKey<ParametrosSistema>(d => d.IdSistema)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ParametrosSistema_Sistema");
         });
 
         //OnModelCreatingPartial(modelBuilder);
