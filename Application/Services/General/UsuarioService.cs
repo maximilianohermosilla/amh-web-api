@@ -73,7 +73,7 @@ namespace Application.Services.General
                 {
                     UsuarioResponse usuarioResponse = _mapper.Map<UsuarioResponse>(usuario);
 
-                    if (usuarioResponse.UsuariosSistema.Select(u => u.IdSistema).Contains(request.IdSistema))
+                    if (usuarioResponse.Habilitado == true && usuarioResponse.UsuariosSistema.Select(u => u.IdSistema).Contains(request.IdSistema))
                     {
                         var keyBytes = Encoding.ASCII.GetBytes(secretKey);
                         var claims = new ClaimsIdentity();
@@ -193,6 +193,16 @@ namespace Application.Services.General
             UsuarioResponse usuarioResponse = new UsuarioResponse();
             try
             {
+                var usuarioCorreoRepetido = await _usuarioQuery.GetByIdAndEmail(entity.Id, entity.Correo);
+
+                if (usuarioResponse != null)
+                {
+                    response.statusCode = 403;
+                    response.message = "Ya existe un usuario habilitado con la misma dirección de correo";
+                    response.response = null;
+                    return response;
+                }
+
                 var usuario = await _usuarioQuery.GetById(entity.Id);
 
                 if (usuario == null)

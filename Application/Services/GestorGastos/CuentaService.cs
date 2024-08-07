@@ -114,13 +114,13 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> Insert(CuentaRequest entity)
+        public async Task<ResponseModel> Insert(CuentaFullRequest entity)
         {
             ResponseModel response = new ResponseModel();
             CuentaResponse cuentaResponse = new CuentaResponse();
             try
             {
-                entity.IdTarjeta = entity.IdTarjeta == 0 ? null : entity.IdTarjeta;
+                //entity.Tarjeta.Id = entity.Tarjeta.Id == 0 ? 0 : entity.Tarjeta.Id;
                 Cuenta cuenta = _mapper.Map<Cuenta>(entity);
                 cuenta = await _cuentaCommand.Insert(cuenta);
                 cuentaResponse = _mapper.Map<CuentaResponse>(cuenta);
@@ -142,7 +142,7 @@ namespace Application.Services.GestorGastos
         }
 
 
-        public async Task<ResponseModel> Update(CuentaRequest entity)
+        public async Task<ResponseModel> Update(CuentaFullRequest entity)
         {
             ResponseModel response = new ResponseModel();
             CuentaResponse cuentaResponse = new CuentaResponse();
@@ -158,7 +158,7 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
                                 
-                cuenta = _mapper.Map<CuentaRequest, Cuenta>(entity, cuenta);
+                cuenta = _mapper.Map<CuentaFullRequest, Cuenta>(entity, cuenta);
 
                 await _cuentaCommand.Update(cuenta);
                 cuentaResponse = _mapper.Map<CuentaResponse>(cuenta);

@@ -1,5 +1,6 @@
 ﻿using amh_web_api.DTO;
 using Application.Interfaces.General.IQueries;
+using Azure.Core;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,11 @@ namespace AccessData.Query.General
             return element;
         }
 
+        public async Task<Usuario> GetByIdAndEmail(int? id, string email)
+        {
+            var element = await _context.Usuario.Where(m => m.Correo == email && m.Id != id && m.Habilitado == true).Include(u => u.Perfil).Include(x => x.UsuariosSistema).ThenInclude(x => x.Sistema).FirstOrDefaultAsync();
+            return element;
+        }
 
         public async Task<Usuario> GetByCredentials(UsuarioLoginDTO request)
         {

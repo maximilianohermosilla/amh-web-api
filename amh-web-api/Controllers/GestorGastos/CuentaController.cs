@@ -71,7 +71,7 @@ namespace amh_web_api.Controllers.GestorGastos
 
         [HttpPost]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Insert(CuentaRequest request)
+        public async Task<IActionResult> Insert(CuentaFullRequest request)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace amh_web_api.Controllers.GestorGastos
 
         [HttpPut]
         //[Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Update(CuentaRequest request)
+        public async Task<IActionResult> Update(CuentaFullRequest request)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace amh_web_api.Controllers.GestorGastos
                 }
                 else
                 {
-                    return new JsonResult(new { Message = "El nombre dla cuenta no puede estar vacío" }) { StatusCode = 400 };
+                    return new JsonResult(new { Message = "El nombre de la cuenta no puede estar vacío" }) { StatusCode = 400 };
                 }
             }
             catch (Exception ex)

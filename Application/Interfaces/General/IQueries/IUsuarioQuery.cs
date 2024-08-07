@@ -7,6 +7,7 @@ namespace Application.Interfaces.General.IQueries
     {
         Task<List<Usuario>> GetAll();
         Task<Usuario> GetById(int? id);
+        Task<Usuario> GetByIdAndEmail(int? id, string email);
         Task<Usuario> GetByCredentials(UsuarioLoginDTO request);
     }
 }

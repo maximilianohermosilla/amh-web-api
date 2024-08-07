@@ -34,6 +34,7 @@ using Application.DTO.MayiBeerCollection;
 using Application.UseCases;
 using Application.DTO.GestorGastos;
 using Application.DTO.GestorExpedientes;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -152,6 +153,8 @@ builder.Services.AddAutoMapper(config =>
 
     config.CreateMap<Cuenta, CuentaRequest>();
     config.CreateMap<CuentaRequest, Cuenta>();
+    config.CreateMap<Cuenta, CuentaFullRequest>();
+    config.CreateMap<CuentaFullRequest, Cuenta>();
     config.CreateMap<Cuenta, CuentaResponse>();
     config.CreateMap<CuentaResponse, Cuenta>();
 
@@ -331,6 +334,14 @@ builder.Services.AddTransient<IEstiloCommand, EstiloCommand>();
 builder.Services.AddTransient<IMarcaCommand, MarcaCommand>();
 #endregion
 
+
+#region Serilog
+
+builder.Host.UseSerilog();
+Serilog.Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
+builder.Host.UseSerilog(((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration)));
+
+#endregion
 
 var app = builder.Build();
 

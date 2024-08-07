@@ -7,6 +7,8 @@ using Application.Interfaces.MayiBeerCollection.IQueries;
 using AutoMapper;
 using Domain.Models.GestorGastos;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Application.Services.GestorGastos
 {
@@ -164,7 +166,7 @@ namespace Application.Services.GestorGastos
                 await _registroCommand.Update(registro);
                 registroResponse = _mapper.Map<RegistroFullResponse>(registro);
 
-                _logger.LogInformation("Se actualizó el registro: " + registro.Id + ". Descripcion anterior: " + registro.Descripcion + ". Descripcion actual: " + entity.Descripcion);
+                _logger.LogInformation("Se actualizó el registro: " + registro.Id + ". Datos anteriores: " + JsonSerializer.Serialize(registroResponse) + ". Datos actualizados: " + JsonSerializer.Serialize(entity));                
             }
             catch (Exception ex)
             {
