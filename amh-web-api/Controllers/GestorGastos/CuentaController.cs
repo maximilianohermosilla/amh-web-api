@@ -45,29 +45,6 @@ namespace amh_web_api.Controllers.GestorGastos
             }
         }
 
-        //[HttpGet("IdCuenta")]
-        //public async Task<IActionResult> GetById(int Id)
-        //{
-        //    try
-        //    {
-        //        var response = await _service.GetById(Id);
-
-        //        if (response.statusCode == 400)
-        //        {
-        //            return BadRequest(new BadRequest { message = response.message });
-        //        }
-        //        if (response.statusCode == 404)
-        //        {
-        //            return NotFound(new BadRequest { message = response.message });
-        //        }
-
-        //        return Ok(response.response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new BadRequest { message = ex.Message });
-        //    }
-        //}
 
         [HttpPost]
         //[Authorize(Roles = "Administrador")]
@@ -77,7 +54,7 @@ namespace amh_web_api.Controllers.GestorGastos
             {
                 if (request.Nombre == "")
                 {
-                    return BadRequest(new BadRequest { message = "El nombre dla cuenta no puede estar vacío" });
+                    return BadRequest(new BadRequest { message = "El nombre de la cuenta no puede estar vacío" });
                 }
 
                 var response = await _service.Insert(request);

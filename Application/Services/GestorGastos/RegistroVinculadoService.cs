@@ -15,14 +15,17 @@ namespace Application.Services.GestorGastos
     {
         private readonly IRegistroVinculadoQuery _registroVinculadoQuery;
         private readonly IRegistroVinculadoCommand _registroVinculadoCommand;
+        private readonly IRegistroQuery _registroQuery;
         private readonly IRegistroCommand _registroCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<RegistroVinculadoService> _logger;
 
-        public RegistroVinculadoService(IRegistroVinculadoQuery registroVinculadoQuery, IRegistroVinculadoCommand registroVinculadoCommand, IMapper mapper, ILogger<RegistroVinculadoService> logger, ICervezaQuery cervezaQuery, IRegistroCommand registroCommand)
+        public RegistroVinculadoService(IRegistroVinculadoQuery registroVinculadoQuery, IRegistroVinculadoCommand registroVinculadoCommand, 
+            IMapper mapper, ILogger<RegistroVinculadoService> logger, IRegistroQuery registroQuery, IRegistroCommand registroCommand)
         {
             _registroVinculadoQuery = registroVinculadoQuery;
             _registroVinculadoCommand = registroVinculadoCommand;
+            _registroQuery = registroQuery;
             _registroCommand = registroCommand;
             _mapper = mapper;
             _logger = logger;
@@ -186,6 +189,21 @@ namespace Application.Services.GestorGastos
 
                 await _registroVinculadoCommand.Update(registroVinculado);
                 registroVinculadoResponse = _mapper.Map<RegistroVinculadoResponse>(registroVinculado);
+
+                List<Registro> registros = await _registroQuery.GetAllByIdRegistroVinculado(entity.IdUsuario, entity.Id);
+
+                if (registros.Any())
+                {
+                    foreach (var registro in registros)
+                    {
+                        registro.IdCuenta = entity.IdCuenta;
+                        registro.IdCategoriaGasto = entity.IdCategoriaGasto;
+                        registro.IdEmpresa = entity.IdEmpresa;
+                        registro.Valor = entity.ValorFinal / entity.Cuotas;
+
+                        await _registroCommand.Update(registro);
+                    }
+                }
 
                 _logger.LogInformation("Se actualizó el registro vinculado: " + registroVinculado.Id + ". Descripcion anterior: " + registroVinculado.Descripcion + ". Descripcion actual: " + entity.Descripcion);
             }

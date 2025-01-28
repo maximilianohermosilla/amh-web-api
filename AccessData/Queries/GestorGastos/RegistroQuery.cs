@@ -28,7 +28,13 @@ var lista = await _context.Registro.
 
         public async Task<List<Registro>> GetAllBySuscripcionAndDate(int? idUsuario, int idSuscripcion, DateTime? fechaDesde)
         {
-            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && r.IdSuscripcion == idSuscripcion && r.Fecha >= fechaDesde).OrderByDescending(r => r.Fecha).ToListAsync();
+            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && r.IdSuscripcion == idSuscripcion && (fechaDesde == null || r.Fecha >= fechaDesde)).OrderByDescending(r => r.Fecha).ToListAsync();
+            return lista;
+        }
+
+        public async Task<List<Registro>> GetAllByIdRegistroVinculado(int? idUsuario, int idRegistroVinculado)
+        {
+            var lista = await _context.Registro.Where(r => r.IdUsuario == idUsuario && r.IdRegistroVinculado == idRegistroVinculado).OrderByDescending(r => r.Fecha).ToListAsync();
             return lista;
         }
 

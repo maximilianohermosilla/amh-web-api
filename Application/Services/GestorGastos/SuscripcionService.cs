@@ -189,6 +189,11 @@ namespace Application.Services.GestorGastos
                     return response;
                 }
 
+                if (fechaDesdeActual < entity.FechaDesde)
+                {
+                    entity.FechaDesde = fechaDesdeActual;
+                }
+
                 suscripcion = _mapper.Map<SuscripcionRequest, Suscripcion>(entity, suscripcion);
 
                 await _suscripcionCommand.Update(suscripcion);
