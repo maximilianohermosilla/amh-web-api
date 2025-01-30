@@ -257,7 +257,6 @@ public partial class AmhWebDbContext : DbContext
 
             entity.HasOne(d => d.Cuenta).WithMany(p => p.Registros)
                 .HasForeignKey(d => d.IdCuenta)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Registro_Cuenta");
 
             entity.HasOne(d => d.Empresa).WithMany(p => p.Registros)
@@ -295,6 +294,13 @@ public partial class AmhWebDbContext : DbContext
             entity.HasOne(d => d.Usuario).WithMany(p => p.RegistrosVinculados)
                .HasForeignKey(d => d.IdUsuario)
                .HasConstraintName("FK_RegistroVinculado_Usuario");
+
+            //Eliminacion en cascada
+            entity.HasMany(s => s.Registros).WithOne(r => r.RegistroVinculado)
+                .HasForeignKey(r => r.IdRegistroVinculado)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Registro_RegistroVinculado");
+
         });
 
         modelBuilder.Entity<Sistema>(entity =>
@@ -327,6 +333,12 @@ public partial class AmhWebDbContext : DbContext
             entity.HasOne(d => d.CategoriaGasto).WithMany(p => p.Suscripciones)
                 .HasForeignKey(d => d.IdCategoriaGasto)
                 .HasConstraintName("FK_Suscripcion_CategoriaGasto");
+
+            //Eliminacion en cascada
+            entity.HasMany(s => s.Registros).WithOne(r => r.Suscripcion)
+                .HasForeignKey(r => r.IdSuscripcion)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Registro_Suscripcion");
 
         });
 

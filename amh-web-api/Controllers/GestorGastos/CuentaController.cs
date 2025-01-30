@@ -4,6 +4,7 @@ using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.IServices;
 using AutoMapper;
 using Domain.Models.GestorGastos;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -22,6 +23,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetAll(int IdUsuario)
         {
             try
@@ -47,7 +49,7 @@ namespace amh_web_api.Controllers.GestorGastos
 
 
         [HttpPost]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Insert(CuentaFullRequest request)
         {
             try
@@ -74,7 +76,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Update(CuentaFullRequest request)
         {
             try
@@ -103,7 +105,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpDelete("{Id}")]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Delete(int Id)
         {
             try

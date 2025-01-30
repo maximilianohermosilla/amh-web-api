@@ -7,6 +7,7 @@ using Application.Interfaces.MayiBeerCollection.IQueries;
 using AutoMapper;
 using Domain.Models.GestorGastos;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 
 namespace Application.Services.GestorGastos
 {
@@ -244,7 +245,14 @@ namespace Application.Services.GestorGastos
 
                             await _registroCommand.Insert(registro);
                         }
-                    }                    
+                    }
+                    else
+                    {
+                        //Elimino registros desde la nueva FechaHasta en adelante
+                        var listaRegistrosEliminar = await _registroQuery.GetAllBySuscripcionAndDate(entity.IdUsuario, entity.Id, entity.FechaHasta);
+
+                        await _registroCommand.DeleteMany(listaRegistrosEliminar);
+                    }
                 }                
 
                 _logger.LogInformation("Se actualizó la suscripcion: " + suscripcion.Id + ". Nombre anterior: " + suscripcion.Nombre + ". Nombre actual: " + entity.Nombre);

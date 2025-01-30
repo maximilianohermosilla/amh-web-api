@@ -14,8 +14,16 @@ namespace AccessData.Commands.GestorGastos
 
         public async Task Delete(Suscripcion entity)
         {
-            _context.Remove(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Remove(entity);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<Suscripcion> Insert(Suscripcion entity)

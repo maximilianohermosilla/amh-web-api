@@ -1,7 +1,10 @@
 ﻿using amh_web_api.DTO;
 using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.IServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace amh_web_api.Controllers.GestorGastos
 {
@@ -17,10 +20,13 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetAll(int idUsuario, string? periodo, int? categoria, bool? pagado)
         {
             try
             {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+
                 var response = await _service.GetAll(idUsuario, periodo, categoria, pagado);
 
                 if (response.statusCode == 400)
@@ -40,32 +46,8 @@ namespace amh_web_api.Controllers.GestorGastos
             }
         }
 
-        //[HttpGet("IdRegistro")]
-        //public async Task<IActionResult> GetById(int Id)
-        //{
-        //    try
-        //    {
-        //        var response = await _service.GetById(Id);
-
-        //        if (response.statusCode == 400)
-        //        {
-        //            return BadRequest(new BadRequest { message = response.message });
-        //        }
-        //        if (response.statusCode == 404)
-        //        {
-        //            return NotFound(new BadRequest { message = response.message });
-        //        }
-
-        //        return Ok(response.response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new BadRequest { message = ex.Message });
-        //    }
-        //}
-
         [HttpPost]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Insert(RegistroRequest request)
         {
             try
@@ -92,7 +74,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Update(RegistroRequest request)
         {
             try
@@ -121,7 +103,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpDelete("{Id}")]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Delete(int Id)
         {
             try

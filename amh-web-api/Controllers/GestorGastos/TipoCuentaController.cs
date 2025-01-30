@@ -1,6 +1,8 @@
 ﻿using amh_web_api.DTO;
 using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.IServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace amh_web_api.Controllers.GestorGastos
@@ -65,7 +67,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Insert(TipoCuentaRequest request)
         {
             try
@@ -92,7 +94,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Update(TipoCuentaRequest request)
         {
             try
@@ -121,7 +123,7 @@ namespace amh_web_api.Controllers.GestorGastos
         }
 
         [HttpDelete("{Id}")]
-        //[Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Delete(int Id)
         {
             try

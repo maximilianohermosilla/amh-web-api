@@ -2,6 +2,7 @@
 using AccessData;
 using amh_web_api.DTO;
 using Application.Interfaces.General.IServices;
+using System.Text;
 
 namespace amh_web_api.Controllers.General
 {
@@ -15,7 +16,8 @@ namespace amh_web_api.Controllers.General
 
         public LoginController(IConfiguration config, AmhWebDbContext context, IConfiguration configuration, IUsuarioService service, ITokenServices tokenServices)
         {
-            secretKey = config.GetSection("settings").GetSection("secretkey").ToString();
+            //secretKey = config.GetSection("settings").GetSection("secretkey").ToString();  
+            secretKey = config["AppSettings:Key"];
             _service = service;
             _tokenServices = tokenServices;
         }
