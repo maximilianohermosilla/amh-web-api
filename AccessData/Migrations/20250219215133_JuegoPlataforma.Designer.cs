@@ -4,6 +4,7 @@ using AccessData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccessData.Migrations
 {
     [DbContext(typeof(AmhWebDbContext))]
-    partial class AmhWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250219215133_JuegoPlataforma")]
+    partial class JuegoPlataforma
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -754,16 +757,25 @@ namespace AccessData.Migrations
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int");
 
+                    b.Property<int>("JuegoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlataformaId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdJuego");
+                    b.HasIndex("JuegoId");
 
-                    b.HasIndex("IdPlataforma");
+                    b.HasIndex("PlataformaId");
 
-                    b.HasIndex("IdUsuario");
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("JuegoPlataforma");
                 });
@@ -792,64 +804,6 @@ namespace AccessData.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Plataforma");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Descripcion = "",
-                            Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/uqaf9wo4vmj4rt5rerdu.png",
-                            Nombre = "Steam",
-                            Url = ""
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Descripcion = "",
-                            Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/cmmuk1h9joqlqxv7acbz.png",
-                            Nombre = "Epic Games",
-                            Url = ""
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Descripcion = "",
-                            Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/gex8ydp24waqkyragrbn.png",
-                            Nombre = "Prime Gaming",
-                            Url = ""
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Descripcion = "",
-                            Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/dkoobr00tb3lhkrlao7w.png",
-                            Nombre = "GOG",
-                            Url = ""
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Descripcion = "",
-                            Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002547/mayigamescollection/tdmnprwnvn5l6dbm3cbr.png",
-                            Nombre = "Ubisoft",
-                            Url = ""
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Descripcion = "",
-                            Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002543/mayigamescollection/bj7m3e8q1jffp64vvyaf.png",
-                            Nombre = "EA Play",
-                            Url = ""
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Descripcion = "",
-                            Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740003046/mayigamescollection/dmlxexzqfcjkrqj30tid.png",
-                            Nombre = "Rockstar",
-                            Url = ""
-                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Pais", b =>
@@ -1232,24 +1186,21 @@ namespace AccessData.Migrations
                 {
                     b.HasOne("Domain.Models.MayiGamesCollection.Juego", "Juego")
                         .WithMany("JuegoPlataformas")
-                        .HasForeignKey("IdJuego")
+                        .HasForeignKey("JuegoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_JuegoPlataforma_Juego");
+                        .IsRequired();
 
                     b.HasOne("Domain.Models.MayiGamesCollection.Plataforma", "Plataforma")
                         .WithMany("JuegoPlataformas")
-                        .HasForeignKey("IdPlataforma")
+                        .HasForeignKey("PlataformaId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_JuegoPlataforma_Plataforma");
+                        .IsRequired();
 
                     b.HasOne("Domain.Models.Usuario", "Usuario")
-                        .WithMany("JuegoPlataformas")
-                        .HasForeignKey("IdUsuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_JuegoPlataforma_Usuario");
+                        .IsRequired();
 
                     b.Navigation("Juego");
 
@@ -1412,8 +1363,6 @@ namespace AccessData.Migrations
                     b.Navigation("Cuentas");
 
                     b.Navigation("Ingresos");
-
-                    b.Navigation("JuegoPlataformas");
 
                     b.Navigation("Registros");
 

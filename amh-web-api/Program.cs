@@ -39,6 +39,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Application.DTO.MayiGamesCollection;
+using Domain.Models.MayiGamesCollection;
+using Application.Interfaces.MayiGamesCollection.IServices;
+using Application.Services.MayiGamesCollection;
+using Application.Interfaces.MayiGamesCollection.IQueries;
+using AccessData.Query.MayiGamesCollection;
+using AccessData.Commands.MayiGamesCollection;
+using Application.Interfaces.MayiGamesCollection.ICommands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -218,6 +226,17 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<RegistroDTO, Registro>();
     #endregion
 
+    #region MAYIGAMESCOLLECTION
+    config.CreateMap<Juego, JuegoRequest>().ReverseMap();
+    config.CreateMap<Juego, JuegoResponse>().ReverseMap();
+
+    config.CreateMap<Plataforma, PlataformaRequest>().ReverseMap();
+    config.CreateMap<Plataforma, PlataformaResponse>().ReverseMap();
+
+    config.CreateMap<JuegoPlataforma, JuegoPlataformaRequest>().ReverseMap();
+    config.CreateMap<JuegoPlataforma, JuegoPlataformaResponse>().ReverseMap();
+    #endregion
+
 }, typeof(Program));
 
 //ADD CORS
@@ -354,6 +373,20 @@ builder.Services.AddTransient<IEstiloCommand, EstiloCommand>();
 builder.Services.AddTransient<IMarcaCommand, MarcaCommand>();
 #endregion
 
+
+#region MayiGamesCollection
+builder.Services.AddTransient<IJuegoService, JuegoService>();
+builder.Services.AddTransient<IPlataformaService, PlataformaService>();
+builder.Services.AddTransient<IJuegoPlataformaService, JuegoPlataformaService>();
+
+builder.Services.AddTransient<IJuegoQuery, JuegoQuery>();
+builder.Services.AddTransient<IPlataformaQuery, PlataformaQuery>();
+builder.Services.AddTransient<IJuegoPlataformaQuery, JuegoPlataformaQuery>();
+
+builder.Services.AddTransient<IJuegoCommand, JuegoCommand>();
+builder.Services.AddTransient<IPlataformaCommand, PlataformaCommand>();
+builder.Services.AddTransient<IJuegoPlataformaCommand, JuegoPlataformaCommand>();
+#endregion
 
 #region Serilog
 

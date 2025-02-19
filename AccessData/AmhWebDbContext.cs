@@ -2,6 +2,7 @@
 using Domain.Models.GestorExpedientes;
 using Domain.Models.GestorGastos;
 using Domain.Models.MayiBeerCollection;
+using Domain.Models.MayiGamesCollection;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccessData;
@@ -48,6 +49,12 @@ public partial class AmhWebDbContext : DbContext
     public virtual DbSet<Usuario> Usuario { get; set; }
     public virtual DbSet<UsuarioSistema> UsuarioSistema { get; set; }
     public virtual DbSet<Cancion> Cancion { get; set; }
+
+    //MAYIGAMESCOLLECTION
+    public virtual DbSet<Juego> Juego { get; set; }
+    public virtual DbSet<Plataforma> Plataforma { get; set; }
+    public virtual DbSet<JuegoPlataforma> JuegoPlataforma { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -420,6 +427,32 @@ public partial class AmhWebDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ParametrosSistema_Sistema");
         });
+
+
+        modelBuilder.Entity<JuegoPlataforma>(entity =>
+        {
+            entity.HasOne(d => d.Juego).WithMany(p => p.JuegoPlataformas)
+                .HasForeignKey(d => d.IdJuego)
+                .HasConstraintName("FK_JuegoPlataforma_Juego");
+
+            entity.HasOne(d => d.Plataforma).WithMany(p => p.JuegoPlataformas)
+                .HasForeignKey(d => d.IdPlataforma)
+                .HasConstraintName("FK_JuegoPlataforma_Plataforma");
+
+            entity.HasOne(d => d.Usuario).WithMany(p => p.JuegoPlataformas)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("FK_JuegoPlataforma_Usuario");
+        });
+
+        modelBuilder.Entity<Plataforma>().HasData(
+            new Plataforma { Id = 1, Nombre = "Steam", Descripcion = "", Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/uqaf9wo4vmj4rt5rerdu.png", Url = "" },
+            new Plataforma { Id = 2, Nombre = "Epic Games", Descripcion = "", Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/cmmuk1h9joqlqxv7acbz.png", Url = "" },
+            new Plataforma { Id = 3, Nombre = "Prime Gaming", Descripcion = "", Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/gex8ydp24waqkyragrbn.png", Url = "" },
+            new Plataforma { Id = 4, Nombre = "GOG", Descripcion = "", Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002075/mayigamescollection/dkoobr00tb3lhkrlao7w.png", Url = "" },
+            new Plataforma { Id = 5, Nombre = "Ubisoft", Descripcion = "", Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002547/mayigamescollection/tdmnprwnvn5l6dbm3cbr.png", Url = "" },
+            new Plataforma { Id = 6, Nombre = "EA Play", Descripcion = "", Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740002543/mayigamescollection/bj7m3e8q1jffp64vvyaf.png", Url = "" },
+            new Plataforma { Id = 7, Nombre = "Rockstar", Descripcion = "", Imagen = "https://res.cloudinary.com/dundcrnii/image/upload/v1740003046/mayigamescollection/dmlxexzqfcjkrqj30tid.png", Url = "" }
+        );
 
         //OnModelCreatingPartial(modelBuilder);
     }

@@ -4,6 +4,7 @@ using AccessData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccessData.Migrations
 {
     [DbContext(typeof(AmhWebDbContext))]
-    partial class AmhWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250219221117_JuegoPlataformaHasData")]
+    partial class JuegoPlataformaHasData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -757,13 +760,16 @@ namespace AccessData.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IdJuego");
 
                     b.HasIndex("IdPlataforma");
 
-                    b.HasIndex("IdUsuario");
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("JuegoPlataforma");
                 });
@@ -1245,11 +1251,10 @@ namespace AccessData.Migrations
                         .HasConstraintName("FK_JuegoPlataforma_Plataforma");
 
                     b.HasOne("Domain.Models.Usuario", "Usuario")
-                        .WithMany("JuegoPlataformas")
-                        .HasForeignKey("IdUsuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_JuegoPlataforma_Usuario");
+                        .IsRequired();
 
                     b.Navigation("Juego");
 
@@ -1412,8 +1417,6 @@ namespace AccessData.Migrations
                     b.Navigation("Cuentas");
 
                     b.Navigation("Ingresos");
-
-                    b.Navigation("JuegoPlataformas");
 
                     b.Navigation("Registros");
 
