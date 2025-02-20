@@ -7,6 +7,7 @@ namespace Application.Interfaces.MayiGamesCollection.IServices
     {
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetById(int? id);
+        Task<ResponseModel> GetByUsuario(int? idUsuario);
         Task<ResponseModel> Insert(JuegoRequest entity);
         Task<ResponseModel> Update(JuegoRequest entity);
         Task<ResponseModel> Delete(int id);

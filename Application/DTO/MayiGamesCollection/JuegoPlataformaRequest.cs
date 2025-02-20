@@ -6,6 +6,7 @@ public partial class JuegoPlataformaRequest
     public int IdJuego { get; set; }
     public int IdPlataforma { get; set; }
     public int IdUsuario { get; set; }
-    public DateTime? Fecha { get; set; }
+    public DateTime? Fecha { get; set; } = DateTime.UtcNow;
     public string? Url { get; set; }
+    public PlataformaResponse Plataforma { get; set; }
 }

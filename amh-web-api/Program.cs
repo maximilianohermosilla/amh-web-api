@@ -47,6 +47,7 @@ using Application.Interfaces.MayiGamesCollection.IQueries;
 using AccessData.Query.MayiGamesCollection;
 using AccessData.Commands.MayiGamesCollection;
 using Application.Interfaces.MayiGamesCollection.ICommands;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -418,5 +419,22 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+// Aplicar migraciones automticamente
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AmhWebDbContext>();
+    try
+    {
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error aplicando migraciones: {ex.Message}");
+    }
+}
+
 
 app.Run();

@@ -11,15 +11,15 @@ namespace Application.Services.GestorExpedientes
 {
     public class JuegoService: IJuegoService
     {
-        private readonly IJuegoQuery _actoQuery;
-        private readonly IJuegoCommand _actoCommand;
+        private readonly IJuegoQuery _juegoQuery;
+        private readonly IJuegoCommand _juegoCommand;
         private readonly IMapper _mapper;
         private readonly ILogger<JuegoService> _logger;
 
-        public JuegoService(IJuegoQuery actoQuery, IJuegoCommand actoCommand, IMapper mapper, ILogger<JuegoService> logger)
+        public JuegoService(IJuegoQuery juegoQuery, IJuegoCommand juegoCommand, IMapper mapper, ILogger<JuegoService> logger)
         {
-            _actoQuery = actoQuery;
-            _actoCommand = actoCommand;
+            _juegoQuery = juegoQuery;
+            _juegoCommand = juegoCommand;
             _mapper = mapper;
             _logger = logger;
         }
@@ -27,23 +27,23 @@ namespace Application.Services.GestorExpedientes
         public async Task<ResponseModel> Delete(int id)
         {
             ResponseModel response = new ResponseModel();
-            JuegoResponse actoResponse = new JuegoResponse();
+            JuegoResponse juegoResponse = new JuegoResponse();
             try
             {
-                var acto = await _actoQuery.GetById(id);
+                var juego = await _juegoQuery.GetById(id);
 
-                if (acto == null)
+                if (juego == null)
                 {
                     response.statusCode = 404;
-                    response.message = "El acto seleccionado no existe";
+                    response.message = "El juego seleccionado no existe";
                     response.response = null;
                     return response;
                 }
 
-                await _actoCommand.Delete(acto);
-                actoResponse = _mapper.Map<JuegoResponse>(acto);
+                await _juegoCommand.Delete(juego);
+                juegoResponse = _mapper.Map<JuegoResponse>(juego);
 
-                _logger.LogInformation("Se eliminó el acto: " + id + ", " + acto.Nombre);
+                _logger.LogInformation("Se eliminó el juego: " + id + ", " + juego.Nombre);
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace Application.Services.GestorExpedientes
 
             response.statusCode = 200;
             response.message = "Juego eliminado exitosamente";
-            response.response = actoResponse;
+            response.response = juegoResponse;
             return response;
         }
 
@@ -64,7 +64,7 @@ namespace Application.Services.GestorExpedientes
 
             try
             {
-                List<Juego> lista = await _actoQuery.GetAll();
+                List<Juego> lista = await _juegoQuery.GetAll();
                 List<JuegoResponse> listaDTO = _mapper.Map<List<JuegoResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
@@ -88,17 +88,17 @@ namespace Application.Services.GestorExpedientes
 
             try
             {
-                Juego acto = await _actoQuery.GetById(IdJuego);
+                Juego juego = await _juegoQuery.GetById(IdJuego);
 
-                if (acto == null)
+                if (juego == null)
                 {
                     response.statusCode = 404;
-                    response.message = "El acto seleccionado no existe";
+                    response.message = "El juego seleccionado no existe";
                     response.response = null;
                     return response;
                 }
 
-                JuegoResponse JuegoResponse = _mapper.Map<JuegoResponse>(acto);
+                JuegoResponse JuegoResponse = _mapper.Map<JuegoResponse>(juego);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
@@ -114,17 +114,41 @@ namespace Application.Services.GestorExpedientes
             return response;
         }
 
+        public async Task<ResponseModel> GetByUsuario(int? IdUsuario)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                List<Juego> lista = await _juegoQuery.GetByUsuario(IdUsuario);
+                List<JuegoResponse> listaDTO = _mapper.Map<List<JuegoResponse>>(lista);
+
+                response.message = "Consulta realizada correctamente";
+                response.statusCode = 200;
+                response.response = listaDTO;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.message = ex.Message;
+                response.response = null;
+            }
+
+            return response;
+        }
+
+
         public async Task<ResponseModel> Insert(JuegoRequest entity)
         {
             ResponseModel response = new ResponseModel();
-            JuegoResponse actoResponse = new JuegoResponse();
+            JuegoResponse juegoResponse = new JuegoResponse();
             try
             {
-                Juego acto = _mapper.Map<Juego>(entity);
-                acto = await _actoCommand.Insert(acto);
-                actoResponse = _mapper.Map<JuegoResponse>(acto);
+                Juego juego = _mapper.Map<Juego>(entity);
+                juego = await _juegoCommand.Insert(juego);
+                juegoResponse = _mapper.Map<JuegoResponse>(juego);
 
-                _logger.LogInformation("Se insertó un nuevo acto: " + acto.Id + ". Nombre: " + acto.Nombre);
+                _logger.LogInformation("Se insertó un nuevo juego: " + juego.Id + ". Nombre: " + juego.Nombre);
             }
             catch (Exception ex)
             {
@@ -136,7 +160,7 @@ namespace Application.Services.GestorExpedientes
 
             response.statusCode = 201;
             response.message = "Juego insertado exitosamente";
-            response.response = actoResponse;
+            response.response = juegoResponse;
             return response;
         }
 
@@ -144,25 +168,25 @@ namespace Application.Services.GestorExpedientes
         public async Task<ResponseModel> Update(JuegoRequest entity)
         {
             ResponseModel response = new ResponseModel();
-            JuegoResponse actoResponse = new JuegoResponse();
+            JuegoResponse juegoResponse = new JuegoResponse();
             try
             {
-                var acto = await _actoQuery.GetById(entity.Id);
+                var juego = await _juegoQuery.GetById(entity.Id);
 
-                if (acto == null)
+                if (juego == null)
                 {
                     response.statusCode = 404;
-                    response.message = "El acto seleccionado no existe";
+                    response.message = "El juego seleccionado no existe";
                     response.response = null;
                     return response;
                 }
                                 
-                acto = _mapper.Map<JuegoRequest, Juego>(entity, acto);
+                juego = _mapper.Map<JuegoRequest, Juego>(entity, juego);
 
-                await _actoCommand.Update(acto);
-                actoResponse = _mapper.Map<JuegoResponse>(acto);
+                await _juegoCommand.Update(juego);
+                juegoResponse = _mapper.Map<JuegoResponse>(juego);
 
-                _logger.LogInformation("Se actualizó el acto: " + acto.Id + ". Nombre anterior: " + acto.Nombre + ". Nombre actual: " + entity.Nombre);
+                _logger.LogInformation("Se actualizó el juego: " + juego.Id + ". Nombre anterior: " + juego.Nombre + ". Nombre actual: " + entity.Nombre);
             }
             catch (Exception ex)
             {
@@ -174,7 +198,7 @@ namespace Application.Services.GestorExpedientes
 
             response.statusCode = 200;
             response.message = "Juego actualizado exitosamente";
-            response.response = actoResponse;
+            response.response = juegoResponse;
             return response;
         }
     }

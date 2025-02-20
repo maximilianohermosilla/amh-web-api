@@ -40,12 +40,12 @@ namespace amh_web_api.Controllers.GestorExpediente
             }
         }
 
-        [HttpGet("{Id}")]
-        public async Task<IActionResult> GetById(int Id)
+        [HttpGet("{IdUsuario}")]
+        public async Task<IActionResult> GetByUsuario(int IdUsuario)
         {
             try
             {
-                var response = await _service.GetById(Id);
+                var response = await _service.GetByUsuario(IdUsuario);
 
                 if (response.statusCode == 400)
                 {

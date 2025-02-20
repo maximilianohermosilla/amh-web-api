@@ -24,5 +24,11 @@ namespace AccessData.Query.MayiGamesCollection
             var element = await _context.Juego.Where(m => m.Id == id).FirstOrDefaultAsync();
             return element;
         }
+
+        public async Task<List<Juego>> GetByUsuario(int? idUsuario)
+        {
+            var element = await _context.Juego.Include(j => j.JuegoPlataformas.Where(m => m.IdUsuario == idUsuario)).ThenInclude(j => j.Plataforma).ToListAsync();
+            return element;
+        }
     }
 }
