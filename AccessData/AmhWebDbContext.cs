@@ -429,6 +429,13 @@ public partial class AmhWebDbContext : DbContext
         });
 
 
+
+        modelBuilder.Entity<Juego>(entity =>
+        {
+            entity.HasMany(j => j.JuegoPlataformas).WithOne(jp => jp.Juego).HasForeignKey(jp => jp.IdJuego).OnDelete(DeleteBehavior.Cascade);
+        });
+
+
         modelBuilder.Entity<JuegoPlataforma>(entity =>
         {
             entity.HasOne(d => d.Juego).WithMany(p => p.JuegoPlataformas)

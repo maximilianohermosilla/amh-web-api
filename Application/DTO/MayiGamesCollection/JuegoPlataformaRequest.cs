@@ -8,5 +8,4 @@ public partial class JuegoPlataformaRequest
     public int IdUsuario { get; set; }
     public DateTime? Fecha { get; set; } = DateTime.UtcNow;
     public string? Url { get; set; }
-    public PlataformaResponse Plataforma { get; set; }
 }

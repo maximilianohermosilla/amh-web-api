@@ -10,7 +10,6 @@ public partial class JuegoPlataformaResponse
     public int IdUsuario { get; set; }
     public DateTime? Fecha { get; set; }
     public string? Url { get; set; }
-    public virtual JuegoResponse Juego { get; set; } = null!;
     public virtual PlataformaResponse Plataforma { get; set; } = null!;
     public virtual UsuarioResponse Usuario { get; set; } = null!;
 
