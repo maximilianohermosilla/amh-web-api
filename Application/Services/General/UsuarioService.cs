@@ -195,7 +195,7 @@ namespace Application.Services.General
             {
                 var usuarioCorreoRepetido = await _usuarioQuery.GetByIdAndEmail(entity.Id, entity.Correo);
 
-                if (usuarioResponse != null)
+                if (usuarioCorreoRepetido != null)
                 {
                     response.statusCode = 403;
                     response.message = "Ya existe un usuario habilitado con la misma dirección de correo";
@@ -215,6 +215,9 @@ namespace Application.Services.General
 
                 usuario.Nombre = entity.Nombre;
                 usuario.Imagen = entity.Imagen;
+                usuario.Correo = entity.Correo;
+                usuario.Habilitado = entity.Habilitado;
+                usuario.IdPerfil = entity.IdPerfil;
 
                 await _usuarioCommand.Update(usuario);
                 usuarioResponse = _mapper.Map<UsuarioResponse>(usuario);
