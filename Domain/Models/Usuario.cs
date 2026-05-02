@@ -1,4 +1,4 @@
-﻿using Domain.Models.GestorGastos;
+using Domain.Models.GestorGastos;
 using Domain.Models.MayiGamesCollection;
 
 namespace Domain.Models;
@@ -36,5 +36,6 @@ public partial class Usuario
     public virtual ICollection<UsuarioSistema> UsuariosSistema { get; } = new List<UsuarioSistema>();
 
     public virtual ICollection<Ingreso> Ingresos { get; } = new List<Ingreso>();
+    public virtual ICollection<RegistroAhorro> RegistrosAhorro { get; } = new List<RegistroAhorro>();
     public virtual ICollection<JuegoPlataforma> JuegoPlataformas { get; } = new List<JuegoPlataforma>();
 }

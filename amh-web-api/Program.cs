@@ -188,6 +188,14 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<Registro, RegistroFullResponse>();
     config.CreateMap<RegistroFullResponse, Registro>();
 
+    config.CreateMap<RegistroAhorro, RegistroAhorroRequest>();
+    config.CreateMap<RegistroAhorroRequest, RegistroAhorro>();
+    config.CreateMap<RegistroAhorro, RegistroAhorroResponse>();
+    config.CreateMap<RegistroAhorroResponse, RegistroAhorro>();
+    config.CreateMap<RegistroAhorro, RegistroAhorroDTO>();
+    config.CreateMap<RegistroAhorroDTO, RegistroAhorro>();
+
+
     config.CreateMap<RegistroVinculado, RegistroVinculadoRequest>();
     config.CreateMap<RegistroVinculadoRequest, RegistroVinculado>();
     config.CreateMap<RegistroVinculado, RegistroVinculadoResponse>();
@@ -329,6 +337,8 @@ builder.Services.AddTransient<ICategoriaIngresoService, CategoriaIngresoService>
 builder.Services.AddTransient<IEmpresaService, EmpresaService>();
 builder.Services.AddTransient<IIngresoService, IngresoService>();
 builder.Services.AddTransient<IRegistroService, RegistroService>();
+builder.Services.AddTransient<IRegistroAhorroService, RegistroAhorroService>();
+
 builder.Services.AddTransient<IRegistroVinculadoService, RegistroVinculadoService>();
 builder.Services.AddTransient<ISuscripcionService, SuscripcionService>();
 builder.Services.AddTransient<ITarjetaService, TarjetaService>();
@@ -342,6 +352,8 @@ builder.Services.AddTransient<ICategoriaIngresoQuery, CategoriaIngresoQuery>();
 builder.Services.AddTransient<IEmpresaQuery, EmpresaQuery>();
 builder.Services.AddTransient<IIngresoQuery, IngresoQuery>();
 builder.Services.AddTransient<IRegistroQuery, RegistroQuery>();
+builder.Services.AddTransient<IRegistroAhorroQuery, RegistroAhorroQuery>();
+
 builder.Services.AddTransient<IRegistroVinculadoQuery, RegistroVinculadoQuery>();
 builder.Services.AddTransient<ISuscripcionQuery, SuscripcionQuery>();
 builder.Services.AddTransient<ITarjetaQuery, TarjetaQuery>();
@@ -353,6 +365,8 @@ builder.Services.AddTransient<ICuentaCommand, CuentaCommand>();
 builder.Services.AddTransient<IEmpresaCommand, EmpresaCommand>();
 builder.Services.AddTransient<IIngresoCommand, IngresoCommand>();
 builder.Services.AddTransient<IRegistroCommand, RegistroCommand>();
+builder.Services.AddTransient<IRegistroAhorroCommand, RegistroAhorroCommand>();
+
 builder.Services.AddTransient<IRegistroVinculadoCommand, RegistroVinculadoCommand>();
 builder.Services.AddTransient<ISuscripcionCommand, SuscripcionCommand>();
 builder.Services.AddTransient<ITarjetaCommand, TarjetaCommand>();

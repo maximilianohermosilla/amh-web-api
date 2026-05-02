@@ -1,4 +1,4 @@
-﻿namespace Domain.Models.GestorGastos;
+namespace Domain.Models.GestorGastos;
 
 public partial class Cuenta
 {
@@ -21,4 +21,5 @@ public partial class Cuenta
     public virtual Usuario Usuario { get; set; } = null!;
 
     public virtual ICollection<Registro> Registros { get; } = new List<Registro>();
+    public virtual ICollection<RegistroAhorro> RegistrosAhorro { get; } = new List<RegistroAhorro>();
 }

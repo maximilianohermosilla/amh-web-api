@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.GestorGastos.IQueries;
+using Application.Interfaces.GestorGastos.IQueries;
 using Domain.Models.GestorGastos;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,12 +13,13 @@ namespace AccessData.Query.GestorGastos
             _context = context;
         }
 
-        public async Task<List<Registro>> GetAll(int idUsuario, string? periodo, int? categoria, bool? pagado)
+        public async Task<List<Registro>> GetAll(int idUsuario, string? periodo, int? categoria, string? descripcion, bool? pagado)
         {
 var lista = await _context.Registro.
                 Where(r => r.IdUsuario == idUsuario && 
                       (periodo == null || r.Periodo!.Contains(periodo)) &&
                       (categoria == null || r.IdCategoriaGasto == categoria) &&
+                      (descripcion == null || r.Descripcion!.Contains(descripcion)) &&
                       (pagado == null || r.Pagado == pagado)).
                 Include(r => r.Cuenta).Include(r => r.CategoriaGasto).Include(r => r.RegistroVinculado).
                 Include(r => r.Empresa).Include(r => r.Suscripcion).

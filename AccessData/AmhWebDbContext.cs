@@ -1,4 +1,4 @@
-﻿using Domain.Models;
+using Domain.Models;
 using Domain.Models.GestorExpedientes;
 using Domain.Models.GestorGastos;
 using Domain.Models.MayiBeerCollection;
@@ -33,6 +33,8 @@ public partial class AmhWebDbContext : DbContext
     public virtual DbSet<TipoCuenta> TipoCuenta { get; set; }
     public virtual DbSet<Suscripcion> Suscripcion { get; set; }
     public virtual DbSet<Ingreso> Ingreso { get; set; }
+    public virtual DbSet<RegistroAhorro> RegistroAhorro { get; set; }
+
 
     //MAYIBEERCOLLECTION
     public virtual DbSet<Cerveza> Cerveza { get; set; }
@@ -290,6 +292,26 @@ public partial class AmhWebDbContext : DbContext
                 .HasForeignKey(d => d.IdUsuario)
                 .HasConstraintName("FK_Registro_Usuario");
         });
+
+        modelBuilder.Entity<RegistroAhorro>(entity =>
+        {
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Fecha).HasColumnType("date");
+            entity.Property(e => e.Observaciones).IsUnicode(false);
+            entity.Property(e => e.Valor).HasColumnType("numeric(25, 2)");
+            entity.Property(e => e.Diferencia).HasColumnType("numeric(25, 2)");
+
+            entity.HasOne(d => d.Cuenta).WithMany(p => p.RegistrosAhorro)
+                .HasForeignKey(d => d.IdCuenta)
+                .HasConstraintName("FK_RegistroAhorro_Cuenta");
+
+            entity.HasOne(d => d.Usuario).WithMany(p => p.RegistrosAhorro)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("FK_RegistroAhorro_Usuario");
+        });
+
 
         modelBuilder.Entity<RegistroVinculado>(entity =>
         {

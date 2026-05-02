@@ -3,26 +3,24 @@ using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.ICommands;
 using Application.Interfaces.GestorGastos.IQueries;
 using Application.Interfaces.GestorGastos.IServices;
-using Application.Interfaces.MayiBeerCollection.IQueries;
 using AutoMapper;
 using Domain.Models.GestorGastos;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Application.Services.GestorGastos
 {
-    public class RegistroService : IRegistroService
+    public class RegistroAhorroService : IRegistroAhorroService
     {
-        private readonly IRegistroQuery _registroQuery;
-        private readonly IRegistroCommand _registroCommand;
+        private readonly IRegistroAhorroQuery _registroAhorroQuery;
+        private readonly IRegistroAhorroCommand _registroAhorroCommand;
         private readonly IMapper _mapper;
-        private readonly ILogger<RegistroService> _logger;
+        private readonly ILogger<RegistroAhorroService> _logger;
 
-        public RegistroService(IRegistroQuery registroQuery, IRegistroCommand registroCommand, IMapper mapper, ILogger<RegistroService> logger, ICervezaQuery cervezaQuery)
+        public RegistroAhorroService(IRegistroAhorroQuery registroAhorroQuery, IRegistroAhorroCommand registroAhorroCommand, IMapper mapper, ILogger<RegistroAhorroService> logger)
         {
-            _registroQuery = registroQuery;
-            _registroCommand = registroCommand;
+            _registroAhorroQuery = registroAhorroQuery;
+            _registroAhorroCommand = registroAhorroCommand;
             _mapper = mapper;
             _logger = logger;
         }
@@ -30,45 +28,46 @@ namespace Application.Services.GestorGastos
         public async Task<ResponseModel> Delete(int id)
         {
             ResponseModel response = new ResponseModel();
-            RegistroFullResponse registroResponse = new RegistroFullResponse();
+            RegistroAhorroResponse registroResponse = new RegistroAhorroResponse();
             try
             {
-                var registro = await _registroQuery.GetById(id);
+                var registro = await _registroAhorroQuery.GetById(id);
 
                 if (registro == null)
                 {
                     response.statusCode = 404;
-                    response.message = "El registro seleccionado no existe";
+                    response.message = "El registro de ahorro seleccionado no existe";
                     response.response = null;
                     return response;
                 }
 
-                await _registroCommand.Delete(registro);
-                registroResponse = _mapper.Map<RegistroFullResponse>(registro);
+                await _registroAhorroCommand.Delete(registro);
+                registroResponse = _mapper.Map<RegistroAhorroResponse>(registro);
 
-                _logger.LogInformation("Se eliminó el registro: " + id + ", " + registro.Descripcion);
+                _logger.LogInformation("Se eliminó el registro de ahorro: " + id + ", " + registro.Descripcion);
             }
             catch (Exception ex)
             {
                 response.statusCode = 400;
                 response.message = ex.Message;
                 response.response = null;
+                return response;
             }
 
             response.statusCode = 200;
-            response.message = "Registro eliminado exitosamente";
+            response.message = "Registro de ahorro eliminado exitosamente";
             response.response = registroResponse;
             return response;
         }
 
-        public async Task<ResponseModel> GetAll(int idUsuario, string? periodo, int? categoria, string? descripcion, bool? pagado)
+        public async Task<ResponseModel> GetAll(int idUsuario, string? periodo, string? descripcion)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                List<Registro> lista = await _registroQuery.GetAll(idUsuario, periodo, categoria, descripcion, pagado);
-                List<RegistroFullResponse> listaDTO = _mapper.Map<List<RegistroFullResponse>>(lista);
+                List<RegistroAhorro> lista = await _registroAhorroQuery.GetAll(idUsuario, periodo, descripcion);
+                List<RegistroAhorroResponse> listaDTO = _mapper.Map<List<RegistroAhorroResponse>>(lista);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
@@ -84,28 +83,27 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-
-        public async Task<ResponseModel> GetById(int? IdRegistro)
+        public async Task<ResponseModel> GetById(int? id)
         {
             ResponseModel response = new ResponseModel();
 
             try
             {
-                Registro registro = await _registroQuery.GetById(IdRegistro);
+                RegistroAhorro registro = await _registroAhorroQuery.GetById(id);
 
                 if (registro == null)
                 {
                     response.statusCode = 404;
-                    response.message = "El registro seleccionado no existe";
+                    response.message = "El registro de ahorro seleccionado no existe";
                     response.response = null;
                     return response;
                 }
 
-                RegistroFullResponse RegistroResponse = _mapper.Map<RegistroFullResponse>(registro);
+                RegistroAhorroResponse registroResponse = _mapper.Map<RegistroAhorroResponse>(registro);
 
                 response.message = "Consulta realizada correctamente";
                 response.statusCode = 200;
-                response.response = RegistroResponse;
+                response.response = registroResponse;
             }
             catch (Exception ex)
             {
@@ -117,18 +115,17 @@ namespace Application.Services.GestorGastos
             return response;
         }
 
-        public async Task<ResponseModel> Insert(RegistroRequest entity)
+        public async Task<ResponseModel> Insert(RegistroAhorroRequest entity)
         {
             ResponseModel response = new ResponseModel();
-            RegistroFullResponse registroResponse = new RegistroFullResponse();
+            RegistroAhorroResponse registroResponse = new RegistroAhorroResponse();
             try
             {
-                Registro registro = _mapper.Map<Registro>(entity);
-                //registro.FechaPago = DateTime.Compare(entity.FechaPago, new DateTime(1900,1,1,0,0,0)) == 0? null: entity.FechaPago;
-                registro = await _registroCommand.Insert(registro);
-                registroResponse = _mapper.Map<RegistroFullResponse>(registro);
+                RegistroAhorro registro = _mapper.Map<RegistroAhorro>(entity);
+                registro = await _registroAhorroCommand.Insert(registro);
+                registroResponse = _mapper.Map<RegistroAhorroResponse>(registro);
 
-                _logger.LogInformation("Se insertó un nuevo registro: " + registro.Id + ". Descripcion: " + registro.Descripcion);
+                _logger.LogInformation("Se insertó un nuevo registro de ahorro: " + registro.Id + ". Descripcion: " + registro.Descripcion);
             }
             catch (Exception ex)
             {
@@ -139,34 +136,33 @@ namespace Application.Services.GestorGastos
             }
 
             response.statusCode = 201;
-            response.message = "Registro insertado exitosamente";
+            response.message = "Registro de ahorro insertado exitosamente";
             response.response = registroResponse;
             return response;
         }
 
-
-        public async Task<ResponseModel> Update(RegistroRequest entity)
+        public async Task<ResponseModel> Update(RegistroAhorroRequest entity)
         {
             ResponseModel response = new ResponseModel();
-            RegistroFullResponse registroResponse = new RegistroFullResponse();
+            RegistroAhorroResponse registroResponse = new RegistroAhorroResponse();
             try
             {
-                var registro = await _registroQuery.GetById(entity.Id);
+                var registro = await _registroAhorroQuery.GetById(entity.Id);
 
                 if (registro == null)
                 {
                     response.statusCode = 404;
-                    response.message = "El registro seleccionado no existe";
+                    response.message = "El registro de ahorro seleccionado no existe";
                     response.response = null;
                     return response;
                 }
 
-                registro = _mapper.Map<RegistroRequest, Registro>(entity, registro);
+                registro = _mapper.Map<RegistroAhorroRequest, RegistroAhorro>(entity, registro);
 
-                await _registroCommand.Update(registro);
-                registroResponse = _mapper.Map<RegistroFullResponse>(registro);
+                await _registroAhorroCommand.Update(registro);
+                registroResponse = _mapper.Map<RegistroAhorroResponse>(registro);
 
-                _logger.LogInformation("Se actualizó el registro: " + registro.Id + ". Datos anteriores: " + JsonSerializer.Serialize(registroResponse) + ". Datos actualizados: " + JsonSerializer.Serialize(entity));                
+                _logger.LogInformation("Se actualizó el registro de ahorro: " + registro.Id + ". Datos anteriores: " + JsonSerializer.Serialize(registroResponse) + ". Datos actualizados: " + JsonSerializer.Serialize(entity));                
             }
             catch (Exception ex)
             {
@@ -177,7 +173,7 @@ namespace Application.Services.GestorGastos
             }
 
             response.statusCode = 200;
-            response.message = "Registro actualizado exitosamente";
+            response.message = "Registro de ahorro actualizado exitosamente";
             response.response = registroResponse;
             return response;
         }

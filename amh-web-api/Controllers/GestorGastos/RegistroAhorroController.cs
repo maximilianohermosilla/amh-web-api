@@ -1,4 +1,4 @@
-﻿using amh_web_api.DTO;
+using amh_web_api.DTO;
 using Application.DTO.GestorGastos;
 using Application.Interfaces.GestorGastos.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,24 +10,22 @@ namespace amh_web_api.Controllers.GestorGastos
 {
     [Route("gestorGastos/[controller]")]
     [ApiController]
-    public class RegistroController : ControllerBase
+    public class RegistroAhorroController : ControllerBase
     {
-        private readonly IRegistroService _service;
+        private readonly IRegistroAhorroService _service;
 
-        public RegistroController(IRegistroService service)
+        public RegistroAhorroController(IRegistroAhorroService service)
         {
             _service = service;
         }
 
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> GetAll(int idUsuario, string? periodo, int? categoria, string? descripcion, bool? pagado)
+        public async Task<IActionResult> GetAll(int idUsuario, string? periodo, string? descripcion)
         {
             try
             {
-                var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-                var response = await _service.GetAll(idUsuario, periodo, categoria, descripcion, pagado);
+                var response = await _service.GetAll(idUsuario, periodo, descripcion);
 
                 if (response.statusCode == 400)
                 {
@@ -48,20 +46,20 @@ namespace amh_web_api.Controllers.GestorGastos
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Insert(RegistroRequest request)
+        public async Task<IActionResult> Insert(RegistroAhorroRequest request)
         {
             try
             {
-                if (request.Descripcion == "")
+                if (string.IsNullOrEmpty(request.Descripcion))
                 {
-                    return BadRequest(new BadRequest { message = "El nombre del registro no puede estar vacío" });
+                    return BadRequest(new BadRequest { message = "La descripción del registro de ahorro no puede estar vacía" });
                 }
 
                 var response = await _service.Insert(request);
 
                 if (response.response == null)
                 {
-                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar el registro. Revise los valores ingresados" });
+                    return BadRequest(new BadRequest { message = "Ocurrió un error al insertar el registro de ahorro. Revise los valores ingresados" });
                 }
 
                 return Created("", response.response);
@@ -70,30 +68,29 @@ namespace amh_web_api.Controllers.GestorGastos
             {
                 return BadRequest(new BadRequest { message = ex.Message });
             }
-
         }
 
         [HttpPut]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Update(RegistroRequest request)
+        public async Task<IActionResult> Update(RegistroAhorroRequest request)
         {
             try
             {
-                if (request.Descripcion != "")
+                if (!string.IsNullOrEmpty(request.Descripcion))
                 {
                     var response = await _service.Update(request);
                     if (response != null && response.response != null)
                     {
-                        return new JsonResult(new { Message = "Se ha actualizado el registro exitosamente.", Response = response }) { StatusCode = 200 };
+                        return new JsonResult(new { Message = "Se ha actualizado el registro de ahorro exitosamente.", Response = response }) { StatusCode = 200 };
                     }
                     else
                     {
-                        return new JsonResult(new { Message = "No se pudo actualizar el registro" }) { StatusCode = 400 };
+                        return new JsonResult(new { Message = "No se pudo actualizar el registro de ahorro" }) { StatusCode = 400 };
                     }
                 }
                 else
                 {
-                    return new JsonResult(new { Message = "El nombre del registro no puede estar vacío" }) { StatusCode = 400 };
+                    return new JsonResult(new { Message = "La descripción del registro de ahorro no puede estar vacía" }) { StatusCode = 400 };
                 }
             }
             catch (Exception ex)
@@ -112,7 +109,7 @@ namespace amh_web_api.Controllers.GestorGastos
 
                 if (response != null && response.response != null)
                 {
-                    return Ok(new { Message = "Se ha eliminado el registro exitosamente.", Response = response });
+                    return Ok(new { Message = "Se ha eliminado el registro de ahorro exitosamente.", Response = response });
                 }
 
                 if (response != null && response.statusCode >= 400 && response.statusCode < 500)
@@ -120,7 +117,7 @@ namespace amh_web_api.Controllers.GestorGastos
                     return BadRequest(new BadRequest { message = response.message });
                 }
 
-                return new JsonResult(new { Message = "No se encuentra el registro" }) { StatusCode = 404 };
+                return new JsonResult(new { Message = "No se encuentra el registro de ahorro" }) { StatusCode = 404 };
             }
             catch (Exception ex)
             {
