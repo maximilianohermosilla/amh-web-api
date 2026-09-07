@@ -48,6 +48,7 @@ public partial class AmhWebDbContext : DbContext
     public virtual DbSet<Perfil> Perfil { get; set; }
     public virtual DbSet<Sistema> Sistema { get; set; }
     public virtual DbSet<ParametrosSistema> ParametrosSistema { get; set; }
+    public virtual DbSet<ParametroConfiguracion> ParametroConfiguracion { get; set; }
     public virtual DbSet<Usuario> Usuario { get; set; }
     public virtual DbSet<UsuarioSistema> UsuarioSistema { get; set; }
     public virtual DbSet<Cancion> Cancion { get; set; }
@@ -448,6 +449,22 @@ public partial class AmhWebDbContext : DbContext
                 .HasForeignKey<ParametrosSistema>(d => d.IdSistema)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ParametrosSistema_Sistema");
+        });
+
+        modelBuilder.Entity<ParametroConfiguracion>(entity =>
+        {
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            
+            entity.Property(e => e.Valor)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Sistema).WithMany(p => p.ParametrosConfiguracion)
+                .HasForeignKey(d => d.IdSistema)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ParametroConfiguracion_Sistema");
         });
 
 

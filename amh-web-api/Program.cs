@@ -82,6 +82,12 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<ParametrosSistema, ParametrosSistemaRequest>();
     config.CreateMap<ParametrosSistemaRequest, ParametrosSistema>();
 
+    config.CreateMap<ParametroConfiguracion, ParametroConfiguracionResponse>();
+    config.CreateMap<ParametroConfiguracionResponse, ParametroConfiguracion>();
+
+    config.CreateMap<ParametroConfiguracion, ParametroConfiguracionRequest>();
+    config.CreateMap<ParametroConfiguracionRequest, ParametroConfiguracion>();
+
     config.CreateMap<Usuario, UsuarioResponse>();
     config.CreateMap<UsuarioResponse, Usuario>();
 
@@ -307,6 +313,10 @@ builder.Services.AddTransient<ISistemaCommand, SistemaCommand>();
 builder.Services.AddTransient<IParametrosSistemaCommand, ParametrosSistemaCommand>();
 builder.Services.AddTransient<IUsuarioCommand, UsuarioCommand>();
 builder.Services.AddTransient<IUsuarioSistemaCommand, UsuarioSistemaCommand>();
+
+builder.Services.AddTransient<IParametroConfiguracionService, ParametroConfiguracionService>();
+builder.Services.AddTransient<IParametroConfiguracionQuery, ParametroConfiguracionQuery>();
+builder.Services.AddTransient<IParametroConfiguracionCommand, ParametroConfiguracionCommand>();
 
 builder.Services.AddHttpClient<IServerImagesApiService, ServerImagesApiService>()
        .Services.AddScoped<IServerImagesApiService, ServerImagesApiService>();
