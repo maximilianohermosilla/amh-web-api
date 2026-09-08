@@ -47,6 +47,7 @@ using Application.Interfaces.MayiGamesCollection.IQueries;
 using AccessData.Query.MayiGamesCollection;
 using AccessData.Commands.MayiGamesCollection;
 using Application.Interfaces.MayiGamesCollection.ICommands;
+using amh_web_api.Workers;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -320,6 +321,9 @@ builder.Services.AddTransient<IParametroConfiguracionCommand, ParametroConfigura
 
 builder.Services.AddHttpClient<IServerImagesApiService, ServerImagesApiService>()
        .Services.AddScoped<IServerImagesApiService, ServerImagesApiService>();
+
+builder.Services.AddHttpClient();
+builder.Services.AddHostedService<InstagramTokenRefreshWorker>();
 #endregion
 
 #region GestorExpedientes
