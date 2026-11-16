@@ -28,17 +28,39 @@ namespace amh_web_api.Workers
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var timer = new PeriodicTimer(_period);
-            while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
+
+            try
             {
-                try
+                _logger.LogInformation("Iniciando tarea inicial de refresh de tokens de Instagram.");
+                await ProcessTokensAsync(stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ocurrió un error durante el refresh inicial de tokens de Instagram.");
+            }
+
+            try
+            {
+                while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
                 {
-                    _logger.LogInformation("Iniciando tarea de refresh de tokens de Instagram.");
-                    await ProcessTokensAsync(stoppingToken);
+                    try
+                    {
+                        _logger.LogInformation("Iniciando tarea periódica de refresh de tokens de Instagram.");
+                        await ProcessTokensAsync(stoppingToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Ocurrió un error al procesar el refresco de tokens de Instagram.");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Ocurrió un error al procesar el refresco de tokens de Instagram.");
-                }
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                // La aplicación se está deteniendo.
             }
         }
 
